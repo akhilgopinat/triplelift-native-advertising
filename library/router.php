@@ -22,6 +22,7 @@ class Triplelift_np_admin_router {
 	}
 
     function route() {
+        include(dirname(__FILE__).'/../html/test_adblock.php');
         // fresh install
         if (!$this->initialized) {
             $this->new_install();

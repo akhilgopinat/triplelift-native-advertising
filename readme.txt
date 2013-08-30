@@ -1,9 +1,9 @@
 === TripleLift Native Advertising Plugin ===
 Contributors: TripleLift
 Tags: Native Advertising
-Requires at least: 3.4.
-Tested up to: 3.4.1
-Stable tag: 1.0
+Requires at least: 3.3.
+Tested up to: 3.4.2
+Stable tag: 1.1
 License: MIT
 
 This is a plugin to implement native advertising with various wordpress themes
@@ -33,8 +33,8 @@ Banner ads flash and blank, and come in one of a set of pre-define shapes and si
 
 == Changelog ==
 
-==== 1.0 ====
-* Intial Release
+1.1 Improved general stability
+1.0 Intial Release
 
 == Upgrade Notice ==
 
