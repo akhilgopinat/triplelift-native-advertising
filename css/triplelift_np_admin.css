@@ -1,0 +1,102 @@
+ul.triplelift_np_admin_hovercheck {
+   margin: 1.5em; 
+}
+ul.triplelift_np_admin_hovercheck li {
+   list-style-image: url(uncheck.gif);
+   border-bottom: 1px solid #ccc;
+   padding: .2em 0 .2em .5em;
+   color: #666; 
+}
+ul.triplelift_np_admin_hovercheck li:hover {
+   cursor: pointer;
+   list-style-image: url(check.gif);
+   background-color: #f2f2f2;
+   color: #000; 
+}
+
+.submit_link {
+	background-color: transparent;
+	text-decoration: underline;
+	border: none;
+	color: blue;
+	cursor: pointer;
+}
+
+.fancylist {
+  width: 650px;
+}
+ 
+
+div.fancylist > ol {
+  margin-left: 30px;
+  padding: 0;
+}
+ 
+.fancylist li {
+  font: 200 20px/1.5 Helvetica, Verdana, sans-serif;
+  border-bottom: 1px solid #ccc;
+}
+ 
+.fancylist li:last-child {
+  border: none;
+}
+ 
+.fancylist li a {
+  text-decoration: none;
+  color: #000;
+  display: block;
+  width: 650px;
+ 
+  -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;
+  -moz-transition: font-size 0.3s ease, background-color 0.3s ease;
+  -o-transition: font-size 0.3s ease, background-color 0.3s ease;
+  -ms-transition: font-size 0.3s ease, background-color 0.3s ease;
+  transition: font-size 0.3s ease, background-color 0.3s ease;
+}
+ 
+.fancylist li a:hover {
+	color: #a70707;
+  background: #f6f6f6;
+}
+
+.triplelift_np_admin_display_success {
+    width: 400px;
+    border: 1px solid #D8D8D8;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: Arial;
+    font-size: 11px;
+    text-transform: uppercase;
+    background-color: rgb(236, 255, 216);
+    color: green;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.triplelift_np_admin_dim {
+    height:100%;
+    width:100%;
+    position:fixed;
+    left:0;
+    top:0;
+    z-index:19 !important;
+    background-color:black;
+    filter: alpha(opacity=85); /* internet explorer */
+    -khtml-opacity: 0.85;      /* khtml, old safari */
+    -moz-opacity: 0.85;       /* mozilla, netscape */
+    opacity: 0.85;           /* fx, safari, opera */
+}
+
+.adblockwarning {
+    position: absolute;
+    top: 40px;
+    left: 30%;
+    width: 400px;
+    margin: 100px auto;
+    border: 1px solid #CCCCCC;
+    background-color: #ef3d47;
+    padding: 20px;
+    color: white;
+    border-radius: 20px;
+    z-index: 20 !important;
+}
