@@ -2,7 +2,7 @@
 Contributors: TripleLift
 Tags: Native Advertising
 Requires at least: 3.3.
-Tested up to: 3.4.2
+Tested up to: 3.6.
 Stable tag: 1.1
 License: MIT
 
