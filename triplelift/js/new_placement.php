@@ -13,7 +13,7 @@ function triplelift_np_admin_new_placement(id, target_div, new_from_theme) {
             	} else {
             		htmlOut += 'The templates below were found for your theme. ';
             	}
-            	htmlOut += 'Please choose a template, <a href="<?php print TRIPLELIFT_NP_CONSOLE_URL.'go?publisher_id='+id+'&token='.urlencode($this->options_object['auth_token']).'&dest='.urlencode('/publisher/create')?>" target="_blank">create a template in the TripleLift console</a> or <a href="mailto:support@triplelift.com" target="_blank"">contact support</a></p><ul>';
+            	htmlOut += 'Please choose a template, <a href="<?php print TRIPLELIFT_NP_CONSOLE_URL;?>go?publisher_id='+id+'&token=<?php print urlencode($this->options_object['auth_token']);?>&dest=<?php print urlencode('/publisher/create');?>" target="_blank">create a template in the TripleLift console</a> or <a href="mailto:support@triplelift.com" target="_blank"">contact support</a></p><ul>';
             	for (var i=0; i<resp.templates.length; i++) {
             		htmlOut += '<li id="triplelift_np_admin_template_'+i+'"><b>Code type</b>: '+resp.templates[i].inv_code_type+'<br>Image dimensions: '+resp.templates[i].image_width+'x'+resp.templates[i].image_height+'<br><a href="#" onclick="triplelift_np_admin_create_placement_from_template(\''+id+'\', \''+resp.templates[i].id+'\', \''+target_div+'\');">Create placement from template</a><br></li>';
             	}
@@ -23,7 +23,7 @@ function triplelift_np_admin_new_placement(id, target_div, new_from_theme) {
             } else {
                 var htmlOut = '<p>';
                 htmlOut += 'There are no placements for this publisher. ';
-                htmlOut += 'No templates were found for your theme. Please <a href="<?php print TRIPLELIFT_NP_CONSOLE_URL.'go?publisher_id='+id+'&token='.urlencode($this->options_object['auth_token']).'&dest='.urlencode('/publisher/create')?>" target="_blank">create a template in the TripleLift console</a> or <a href="mailto:support@triplelift.com" target="_blank"">contact support</a></p>';
+                htmlOut += 'No templates were found for your theme. Please <a href="<?php print TRIPLELIFT_NP_CONSOLE_URL;?>go?publisher_id='+id+'&token=<?php print urlencode($this->options_object['auth_token']);?>&dest=<?php print urlencode('/publisher/create');?>" target="_blank">create a template in the TripleLift console</a> or <a href="mailto:support@triplelift.com" target="_blank"">contact support</a></p>';
             	jQuery("#"+target_div).html(htmlOut);	
             }
         } else {
@@ -32,7 +32,7 @@ function triplelift_np_admin_new_placement(id, target_div, new_from_theme) {
 
     });
 
-    jQuery("#"+target_div).html('<div class="updated" id="message"><p><strong>Error</strong>: No placement found - please create one in the <a href="<?php print TRIPLELIFT_NP_CONSOLE_URL.'go?publisher_id='+id+'&token='.urlencode($this->options_object['auth_token']).'&dest='.urlencode('/publisher/create')?>" target="_blank">TripleLift console</a></p></div>');
+    jQuery("#"+target_div).html('<div class="updated" id="message"><p><strong>Error</strong>: No placement found - please create one in the <a href="<?php print TRIPLELIFT_NP_CONSOLE_URL;?>go?publisher_id='+id+'&token=<?php print urlencode($this->options_object['auth_token']);?>&dest=<?php print urlencode('/publisher/create');?>" target="_blank">TripleLift console</a></p></div>');
 }
 
 function triplelift_np_admin_create_placement_from_template(publisher_id, template_id, target_div) {
@@ -54,7 +54,7 @@ function triplelift_np_admin_create_placement_from_template(publisher_id, templa
 					    "image_height": resp1.templates[0].image_height,
 					    "template_code": resp1.templates[0].template_code,
 					    "inv_code": resp2.publisher.name.toLowerCase().replace(/\s+/g, '')+"_"+resp1.templates[0].inv_code_type,
-					    "demand_enabled": "0",
+					    "demand_enabled": "1",
 					    "default_code": "",
 					}, 
 					// now take the newly created placement from appnexus and create a placement in wordpress
@@ -62,7 +62,7 @@ function triplelift_np_admin_create_placement_from_template(publisher_id, templa
 						if (resp3.status) {
 							window.location = "<?php print TRIPLELIFT_NP_BASE_URL.
 								'&'.$this->action_field.'=new_placement_from_theme'.
-								'&triplelift_np_admin_script='.urlencode('<script src="ib.3lift.com/ttj?member_id='.$this->options_object['member_id'].'inv_code=');?>"+encodeURIComponent(resp3.placement.inv_code)+'<?php print urlencode('></script>')?>'+
+								'&triplelift_np_admin_script='.urlencode('<script src="'.TRIPLELIFT_NP_IB.'ttj?member_id='.$this->options_object['member_id'].'&inv_code=');?>"+encodeURIComponent(resp3.placement.inv_code)+"<?php print urlencode('"></script>')?>"+
 								'&triplelift_np_admin_wp_type_include='+encodeURIComponent(resp1.templates[0].wp_page_type_include)+
 								'&triplelift_np_admin_wp_type_exclude='+encodeURIComponent(resp1.templates[0].wp_page_type_exclude)+
 								'&triplelift_np_admin_include_path='+encodeURIComponent(resp1.templates[0].include_path)+

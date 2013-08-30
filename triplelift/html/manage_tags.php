@@ -8,9 +8,9 @@ if (count($this->tags) ==  0) {
 	if (isset($this->error_message) && $this->error_message) {
 		print '<br><div class="updated" id="message"><p><strong>Error:</strong> '.$this->error_message.'</p></div>';
 	}
-	if (count($this->tags) > 0) print '<h4>Click on a tag below to edit</h4>';
-	else print '<h4>No more tags. Create a new tag above</h4>';
 	$tags = array_reverse($this->tag_manager->get_tags());
+	if (count($tags) > 0) print '<h4>Click on a tag below to edit</h4>';
+	else print '<h4>No tags. Create a new tag above</h4>';
 	print '<ul class="triplelift_np_admin_hovercheck">';
 	foreach ($tags as $curr_tag) {
 		print '<li><a href="'.TRIPLELIFT_NP_BASE_URL.'&tab=modify_tags&'.$this->action_field.'=modify_single_tag_start&tag='.urlencode($curr_tag['script']).'"><pre>'.stripslashes($curr_tag['script']).'</pre></a>';

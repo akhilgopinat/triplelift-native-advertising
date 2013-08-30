@@ -73,3 +73,30 @@ div.fancylist > ol {
     margin-top: 30px;
 }
 
+.triplelift_np_admin_dim {
+    height:100%;
+    width:100%;
+    position:fixed;
+    left:0;
+    top:0;
+    z-index:19 !important;
+    background-color:black;
+    filter: alpha(opacity=85); /* internet explorer */
+    -khtml-opacity: 0.85;      /* khtml, old safari */
+    -moz-opacity: 0.85;       /* mozilla, netscape */
+    opacity: 0.85;           /* fx, safari, opera */
+}
+
+.adblockwarning {
+    position: absolute;
+    top: 40px;
+    left: 30%;
+    width: 400px;
+    margin: 100px auto;
+    border: 1px solid #CCCCCC;
+    background-color: #ef3d47;
+    padding: 20px;
+    color: white;
+    border-radius: 20px;
+    z-index: 20 !important;
+}
