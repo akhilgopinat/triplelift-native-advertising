@@ -5,7 +5,16 @@ function triplelift_np_admin_html_placement_add(target_div, error_message) {
 	} else {
 		error_message = '';
 	}
-	var main_text ='<a href="#" onclick="triplelift_np_admin_add_tag(\''+target_div+'\')">Go back</a><br>&nbsp;<br><form name="logout" method="post" action="options-general.php?page=triplelift_np_admin"><input type="hidden" name="<?php print $this->action_field?>" value="new_html_placement">Please paste the tag below:<br><textarea rows="8" cols="75" id="triplelift_np_admin_html_placement_value" name="triplelift_np_admin_html_placement_value"></textarea><br><input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Submit') ?>" /></form>';
+	var main_text ='<a href="#" onclick="triplelift_np_admin_add_tag(\''+target_div+'\')">Go back</a><br>&nbsp;<br><form name="logout" method="post" action="options-general.php?page=triplelift_np_admin" class="fancy-form">'+
+    '<p class="name">'+  
+        '<label for="name">Please paste the tag here:</label>  '+
+        '<input type="text" name="triplelift_np_admin_html_placement_value" id="triplelift_np_admin_html_placement_value" size=75/> '+
+    '</p>'+
+    '<input type="hidden" name="<?php print $this->action_field?>" value="new_html_placement">'+
+    '<p class="submit">'+
+        '<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Submit') ?>" />'+
+    '</p>'+
+    '</form>';
     jQuery("#"+target_div).html(error_message + main_text);
 }
 

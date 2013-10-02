@@ -9,6 +9,7 @@ class Triplelift_np_admin_tag_manager {
 	public $error_message = '', $updated_tag_settings;
     public $eligible_hooks = array('content', 'excerpt');
     public $eligible_intervals = array(1,2,3,4,5,6,7,8,9,10,11,12);
+    public $eligible_offsets = array("n/a",1,2,3,4,5);
 
 	public function get_tag_settings_by_script($script) {
 		$script = stripslashes($script);
@@ -90,6 +91,7 @@ class Triplelift_np_admin_tag_manager {
 			$this->admin_preview = isset($_POST['triplelift_np_admin_admin_preview']) ? $_POST['triplelift_np_admin_admin_preview'] : false;
             $this->hook = $_POST['triplelift_np_admin_hook'];
             $this->interval = $_POST['triplelift_np_admin_interval'];
+            $this->offset = $_POST['triplelift_np_admin_offset'];
 
 			if (!strpos($this->modified_script, 'script')) {
 				$this->error = true;
@@ -103,6 +105,11 @@ class Triplelift_np_admin_tag_manager {
                 $this->error = true;
                 $this->erorr_message = 'Invalid interval'; 
             }
+            if (!in_array($_POST['triplelift_np_admin_offset'], $this->eligible_offsets)) {
+                $this->error = true;
+                $this->erorr_message = 'Invalid offset'; 
+            }
+
 		}
 	}
 
@@ -130,6 +137,7 @@ class Triplelift_np_admin_tag_manager {
 						'exclude_path' => explode(',',$this->exclude_paths),
 						'active' => $this->active,
 						'interval' => $this->interval,
+						'offset' => $this->offset,
                         'admin_preview' => $this->admin_preview,
                         'hook' => $this->hook
 					);
@@ -148,7 +156,7 @@ class Triplelift_np_admin_tag_manager {
 		return false;
 	}
 
-	public function add_tag_from_theme($script, $wp_page_type_include, $wp_page_type_exclude, $include_path, $exclude_path, $interval, $hook) {
+	public function add_tag_from_theme($script, $wp_page_type_include, $wp_page_type_exclude, $include_path, $exclude_path, $interval, $offset, $hook) {
 		$wp_page_type_include_processed = array(
 			'is_home' => 0,
 			'is_front_page' => 0,
@@ -192,6 +200,7 @@ class Triplelift_np_admin_tag_manager {
 			'include_path' => explode(',', $include_path),
 			'exclude_path' => explode(',', $exclude_path),
 			'interval' => $interval,
+			'offset' => $offset,
 			'active' => true,
 	        'admin_preview' => false,
 	        'hook' => $hook
@@ -202,8 +211,8 @@ class Triplelift_np_admin_tag_manager {
 	}
 
 	public function add_tag($script) {
-
-		if (count($this->options_object['tags']) == 0) {
+        $curr_tags = $this->get_tags();
+		if (count($curr_tags) == 0) {
 			$wp_page_type_include = array(
 				'is_home' => 1,
 				'is_front_page' => 1,
@@ -271,6 +280,7 @@ class Triplelift_np_admin_tag_manager {
 			'include_path' => array(),
 			'exclude_path' => array(),
 			'interval' => 6,
+			'offset' => 4,
 			'active' => true,
             'admin_preview' => false,
             'hook' => 'excerpt'
@@ -311,7 +321,7 @@ class Triplelift_np_admin_tag_manager {
 		$count = 1;
 		foreach ($data as $field => $val) {
 			if ($val) $checked = ' checked '; else $checked = ' ';
-			$return_str .= '<input name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.' value="'.$field.'"> '.$this->field_name_map($field).' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			$return_str .= '<input class="tl_np_checkbox" name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.' value="'.$field.'" data-label="'.$this->field_name_map($field).'"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			if ($count % 4 == 0) $return_str .= '<br>';
 			$count++;
 		}
@@ -333,7 +343,7 @@ class Triplelift_np_admin_tag_manager {
 
 	public function render_active($script_data, $input_name) {
 		$checked = $script_data['active'] ? ' checked ' : ' ';
-		return 'Tag currently being used: <br><input name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.'> Active';
+		return '<input class="tl_np_checkbox" name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.' data-label="Tag currently active">';
 	}
 
 
@@ -343,11 +353,22 @@ class Triplelift_np_admin_tag_manager {
 	}
 
 	public function render_interval($script_data, $input_name) {
-        $return_str = 'Interval between posts (ignored on single pages): <select id="'.$input_name.'" name="'.$input_name.'">';
+        $return_str = '<b>Interval</b> between posts (ignored on single pages): <select id="'.$input_name.'" name="'.$input_name.'">';
         foreach ($this->eligible_intervals as $curr_interval) {
             if ($script_data['interval'] == $curr_interval) $selected = ' selected ';
             else $selected = ' ';
             $return_str .= '<option value="'.$curr_interval.'" '.$selected.'>'.$curr_interval.'</option>';
+        }
+        return $return_str .= '</select>';
+	}
+
+	public function render_offset($script_data, $input_name) {
+        $return_str = '<b>Offset</b> for first post: <select id="'.$input_name.'" name="'.$input_name.'">';
+        if (!isset($script_data['offset'])) {$script_data['offset'] = 'n/a';}
+        foreach ($this->eligible_offsets as $curr_offset) {
+            if ($script_data['offset'] == $curr_offset) $selected = ' selected ';
+            else $selected = ' ';
+            $return_str .= '<option value="'.$curr_offset.'" '.$selected.'>'.$curr_offset.'</option>';
         }
         return $return_str .= '</select>';
 	}

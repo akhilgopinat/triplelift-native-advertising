@@ -37,7 +37,6 @@ class Triplelift_np_injection {
 
     function find_eligible_tags() {
         $this->eligible_tags = array();
-
         $path = parse_url(get_bloginfo( 'url' ), PHP_URL_PATH);
 
         foreach ($this->tags as $curr_tag) {
@@ -64,7 +63,15 @@ class Triplelift_np_injection {
 
                 }
 
-                if (!$ineligible) $this->eligible_tags[] = array('script' => $curr_tag['script'], 'hook' => $curr_tag['hook'], 'path_match' => $path_match, 'interval' => $curr_tag['interval'], 'wp_page_type_exclude' => $curr_tag['wp_page_type_exclude'], 'wp_page_type_include' => $curr_tag['wp_page_type_include']);
+                if (!$ineligible) $this->eligible_tags[] = array(
+                	'script' => $curr_tag['script'], 
+                	'hook' => $curr_tag['hook'], 
+                	'path_match' => $path_match, 
+                	'interval' => $curr_tag['interval'], 
+                	'offset' => (isset($curr_tag['offset']) ? $curr_tag['offset'] : 'n/a'), 
+                	'wp_page_type_exclude' => $curr_tag['wp_page_type_exclude'], 
+                	'wp_page_type_include' => $curr_tag['wp_page_type_include']
+                );
             }
            
         }
@@ -91,10 +98,27 @@ class Triplelift_np_injection {
 
                 if (!$ineligible && ($include_match || $curr_tag['path_match'])) {
                     // we got a match
-                    if ($injection->post_count % $curr_tag['interval'] == 0 && $injection->post_count > 0) { 
-                        $injection->post_count++;
-                        return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                    // are we doing offset stuff
+                    if (isset($curr_tag['offset']) && $curr_tag['offset'] != 'n/a') {
+						if ($injection->post_count <= $curr_tag['offset']) {
+							if ($injection->post_count == $curr_tag['offset']) { 
+		                        $injection->post_count++;
+		                        return $content.html_entity_decode(stripslashes($curr_tag['script']));
+		                    }	
+						} else {
+		                    if ( ($injection->post_count - $curr_tag['offset']) % $curr_tag['interval'] == 0 && $injection->post_count > 0) { 
+		                        $injection->post_count++;
+		                        return $content.html_entity_decode(stripslashes($curr_tag['script']));
+		                    }
+							
+						}
+                    } else {
+	                    if ($injection->post_count % $curr_tag['interval'] == 0 && $injection->post_count > 0) { 
+	                        $injection->post_count++;
+	                        return $content.html_entity_decode(stripslashes($curr_tag['script']));
+	                    }
                     }
+                    
 
                     $injection->post_count++;
                     break;

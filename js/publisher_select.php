@@ -32,12 +32,11 @@ function triplelift_np_admin_load_publishers(target_div, new_from_theme) {
                 triplelift_np_admin_select_publisher(resp.publishers[0].id, resp.publishers[0].name, target_div, new_from_theme);
             }	
             else if (resp.publishers.length > 1) {
-
-                jQuery("#"+target_div).html('<a href="#" onclick="triplelift_np_admin_add_tag(\''+target_div+'\')">Go back</a><br>&nbsp;<br><div id="triplelift_np_admin_publisher_select"><strong>Please select from one of your publishers:</strong><ul id="triplelift_np_admin_publisher_list"></ul></div>');
+                var html = '<a href="#" onclick="triplelift_np_admin_add_tag(\''+target_div+'\')">Go back</a><br>&nbsp;<br><div class="list-table" style="width:300px;"><table><tr><td>Choose Publisher</td></tr>';
                 for (i=0; i<resp.publishers.length;i++) {
-                    jQuery("#triplelift_np_admin_publisher_list").append('<li><a href="#" onclick="triplelift_np_admin_select_publisher('+resp.publishers[i].id+', \''+resp.publishers[i].name+'\', \''+target_div+'\', '+new_from_theme+')"><span class="tab">'+resp.publishers[i].name+'</span></a></li>');
+                    html += '<tr><td><a href="#" onclick="triplelift_np_admin_select_publisher('+resp.publishers[i].id+', \''+resp.publishers[i].name+'\', \''+target_div+'\', '+new_from_theme+')"><span class="tab">'+resp.publishers[i].name+'</span></a></td></tr>';
                 }
-
+                jQuery("#"+target_div).html(html);
             }
         } else {
             unable_to_contact(target_div);

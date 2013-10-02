@@ -9,13 +9,19 @@ function triplelift_np_admin_new_placement(id, target_div, new_from_theme) {
                     htmlOut += 'No placements exist for this publisher. You may create one from a template</p><p>';
                 }
             	if (resp.templates.length == 1) {
-            		htmlOut += 'The template below was found for your theme. ';
+            		htmlOut += '<b>Template found!</b>';
             	} else {
-            		htmlOut += 'The templates below were found for your theme. ';
+            		htmlOut += '<b>Templates found!</b>';
             	}
-            	htmlOut += 'Please choose a template, <a href="<?php print TRIPLELIFT_NP_CONSOLE_URL;?>go?publisher_id='+id+'&token=<?php print urlencode($this->options_object['auth_token']);?>&dest=<?php print urlencode('/publisher/create');?>" target="_blank">create a template in the TripleLift console</a> or <a href="mailto:support@triplelift.com" target="_blank"">contact support</a></p><ul>';
+            	htmlOut += '<br>&nbsp;<br>Select a template below:<ul class="card-list">';
             	for (var i=0; i<resp.templates.length; i++) {
-            		htmlOut += '<li id="triplelift_np_admin_template_'+i+'"><b>Code type</b>: '+resp.templates[i].inv_code_type+'<br>Image dimensions: '+resp.templates[i].image_width+'x'+resp.templates[i].image_height+'<br><a href="#" onclick="triplelift_np_admin_create_placement_from_template(\''+id+'\', \''+resp.templates[i].id+'\', \''+target_div+'\');">Create placement from template</a><br></li>';
+            		htmlOut += 
+            			'<li id="triplelift_np_admin_template_'+i+'">'+
+            				'<a href="#" onclick="triplelift_np_admin_create_placement_from_template(\''+id+'\', \''+resp.templates[i].id+'\', \''+target_div+'\');">'+
+							'<strong><?php print $this->theme;?></strong>'+
+							
+            				'<br>&nbsp;<br><span class="card-list-text">Image: '+resp.templates[i].image_width+'x'+resp.templates[i].image_height+'<br>Tag Code: '+resp.templates[i].inv_code_type+'</span>'+
+            			'</li>';	
             	}
             	htmlOut += '<ul>';
             	jQuery("#"+target_div).html(htmlOut);
