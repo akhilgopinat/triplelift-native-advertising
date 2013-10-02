@@ -11,43 +11,29 @@ if (count($this->tags) ==  0) {
 	$tags = array_reverse($this->tag_manager->get_tags());
 	if (count($tags) > 0) print '<h4>Click on a tag below to edit</h4>';
 	else print '<h4>No tags. Create a new tag above</h4>';
-	print '<ul class="triplelift_np_admin_hovercheck">';
+	print '<ul class="card-list">';
 	foreach ($tags as $curr_tag) {
-		print '<li><a href="'.TRIPLELIFT_NP_BASE_URL.'&tab=modify_tags&'.$this->action_field.'=modify_single_tag_start&tag='.urlencode($curr_tag['script']).'"><pre>'.stripslashes($curr_tag['script']).'</pre></a>';
+		print '<li><a href="'.TRIPLELIFT_NP_BASE_URL.'&tab=modify_tags&'.$this->action_field.'=modify_single_tag_start&tag='.urlencode($curr_tag['script']).'">';
+		
+		$inv_code_start = strpos($curr_tag['script'], 'inv_code')+9;
+		$inv_code_end_amp = strpos($curr_tag['script'], '&', $inv_code_start);
+		$inv_code_end_slash = strpos($curr_tag['script'], '\\', $inv_code_start);
+		
+		if ($inv_code_end_slash && $inv_code_end_slash < $inv_code_end_amp) {
+			$inv_code_end = $inv_code_end_slash;
+		} else {
+			$inv_code_end = $inv_code_end_amp;
+		}
+		
+		print '<strong>'.substr($curr_tag['script'], $inv_code_start, $inv_code_end - $inv_code_start).'</strong>'.
+			'<br>&nbsp;<br><span class="card-list-text">';
 		
 		if ($curr_tag['active']) {
-
-		    if ($curr_tag['admin_preview']) {
-                print 'Preview mode enabled</br>';
-            }
-			print 'Always included on: ';
-			$count = 0;
-			foreach ($curr_tag['wp_page_type_include'] as $wp_include_page => $val) {
-				if ($val) {
-					if ($count > 0) print ', ';
-					print $this->tag_manager->field_name_map($wp_include_page);
-					$count++;
-				}
-			}
-			if ($count == 0) print 'No pages';
-			print '<br>Always excluded on: ';
-			$count = 0;
-			foreach ($curr_tag['wp_page_type_exclude'] as $wp_exclude_page => $val) {
-				if ($val) {
-					if ($count > 0) print ', ';
-					print $this->tag_manager->field_name_map($wp_exclude_page);
-					$count++;
-				}
-			}
-			if ($count == 0) print 'No pages';
-			print '<br>Include paths: '.( count($curr_tag['include_path']) ? implode(',', $curr_tag['include_path']) : 'No paths');
-			print '<br>Exclude paths: '.( count($curr_tag['exclude_path']) ? implode(',', $curr_tag['exclude_path']) : 'No paths');
+			print 'Active';
 		} else {
 			print 'Inactive';
 		}			
-
-		print '<p><a href="'.TRIPLELIFT_NP_BASE_URL.'&tab=modify_single_tag_start&tag='.urlencode($curr_tag['script']).'">Edit</a></p>';
-		print '</li>';
+		print '</span></li>';
 	}	
 	print '</ul>';
 ?>

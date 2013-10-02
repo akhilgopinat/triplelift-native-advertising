@@ -17,11 +17,8 @@ function triplelift_np_admin_select_placement(id, inv_code) {
     hiddenField.setAttribute("value",'<script src="<?php print TRIPLELIFT_NP_IB;?>ttj?inv_code='+inv_code+'&member=<?php print $this->options_object['member_id']?>"><'+'/script>');
 	form.appendChild(hiddenField);
 
-
-
     document.body.appendChild(form);
-    form.submit();
-	    
+    form.submit();	    
 }
 
 function triplelift_np_admin_load_placements(id, target_div) {
@@ -35,11 +32,13 @@ function triplelift_np_admin_load_placements(id, target_div) {
             
             // if there's one or more
             else if (resp.placements.length >= 1) {
+                var html = '<a href="#" id="triplelift_np_admin_placement_back">Go back</a><br>&nbsp;<br><div class="list-table" style="width:300px;"><table><tr><td>Choose Placement</td></tr>';
 
-                jQuery("#"+target_div).html('<a href="#" id="triplelift_np_admin_placement_back">Go back</a><br><div id="triplelift_np_admin_placement_select"><strong>Please choose a placement below or <a href="<?php print TRIPLELIFT_NP_CONSOLE_URL;?>go?publisher_id='+id+'&token=<?php print urlencode($this->options_object['auth_token']);?>&dest=<?php print urlencode('/publisher/create');?>" target="_blank">create one</a> in the TripleLift console:</strong><ul id="triplelift_np_admin_placement_list"></ul></div>');
                 for (i=0; i<resp.placements.length;i++) {
-                    jQuery("#triplelift_np_admin_placement_list").append('<li><a href="#" onclick="triplelift_np_admin_select_placement('+resp.placements[i].id+', \''+resp.placements[i].inv_code+'\', false)"><span class="tab">'+resp.placements[i].inv_code+'</span></a></li>');
+
+                    html += '<tr><td><a href="#" onclick="triplelift_np_admin_select_placement('+resp.placements[i].id+', \''+resp.placements[i].inv_code+'\', false)"><span class="tab">'+resp.placements[i].inv_code+'</span></a></td></tr>';
                 }
+                jQuery("#"+target_div).html(html);
 				jQuery("#triplelift_np_admin_placement_back").click(function() {
 					triplelift_np_admin_load_publishers(target_div);	
 				});

@@ -85,6 +85,7 @@ class Triplelift_np_admin_router {
 					$include_path = isset($_GET['triplelift_np_admin_include_path']) ? $_GET['triplelift_np_admin_include_path' ] : '';
 					$exclude_path = isset($_GET['triplelift_np_admin_exclude_path']) ? $_GET['triplelift_np_admin_exclude_path' ] : '';
 					$interval = isset($_GET['triplelift_np_admin_interval']) ? $_GET['triplelift_np_admin_interval' ] : '';
+					$offset = isset($_GET['triplelift_np_admin_offset']) ? $_GET['triplelift_np_admin_offset' ] : '';
 					$hook = isset($_GET['triplelift_np_admin_hook']) ? $_GET['triplelift_np_admin_hook' ] : '';
 
 					if ($this->tag_manager->tag_exists($script)) {
@@ -94,7 +95,7 @@ class Triplelift_np_admin_router {
 						$this->function_call =  ' triplelift_np_admin_html_placement_add("triplelift_np_admin_canvas", "You have already added this placement. You can manage its settings under Manage Tags above."); ';	
 						$this->includes = array('js/add_tag.php');
 					} else {
-						$this->tag_manager->add_tag_from_theme($script, $wp_page_type_include, $wp_page_type_exclude, $include_path, $exclude_path, $interval, $hook);
+						$this->tag_manager->add_tag_from_theme($script, $wp_page_type_include, $wp_page_type_exclude, $include_path, $exclude_path, $interval, $offset, $hook);
 						$this->active_page = 'manage_tags';
 						$page_action = 'include';
 						$page_include = 'html/manage_single_tag.php';
