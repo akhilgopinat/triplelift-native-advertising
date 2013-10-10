@@ -3,7 +3,7 @@ Contributors: TripleLift
 Tags: Native Advertising, TripleLift, Advertising, Monetization, Ads
 Requires at least: 3.2.
 Tested up to: 3.6.1
-Stable tag: 1.3
+Stable tag: 1.4.1
 License: MIT
 
 Implement native advertising with the click of a few buttons. Increase revenue and improve user experience with beautiful, unobtrusive, image-driven advertising
@@ -66,6 +66,10 @@ Yes. Many publishers who manage their own sales choose to license our native ad 
 Absolutely not. Our tags fetch content asynchronously from blazing fast CDNs located in 30 data centers around the world.
 
 == Changelog ==
+
+= 1.4 =
+* Debug Mode
+* New page signup
 
 = 1.3 = 
 * Polish UI
