@@ -61,5 +61,17 @@ class Triplelift_np_admin_register {
         $auth->end();
     }
 
-
+	function install_plugin() {
+		$plugin_data = get_plugin_data( dirname(__FILE__).'/../triplelift.php' );
+        $theme = wp_get_theme();
+		$api = new Triplelift_np_admin_api();
+		$out = $api->do_post("/native_advertising/wp/new_install", array(
+			'theme_name' 	=> $theme->Name,
+			'host' 			=> get_bloginfo('url'),
+			'admin_email' 	=> get_bloginfo('admin_email'),
+			'wp_version' 	=> get_bloginfo('version'),
+			'plugin_version' => $plugin_data['Version'],  	
+		));
+			
+	}	
 }

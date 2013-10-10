@@ -6,7 +6,11 @@ class Triplelift_np_admin_router {
     public $action_field = 'triplelift_np_admin_action';
     public $options_object, $active, $initialized, $tags, $theme, $blog_host;
 
-	public $tabs = array( 'manage_tags' => 'Manage Tags', 'new_tag' => 'Create New Tag');
+	public $tabs = array( 
+        'manage_tags' => 'Manage Tags', 
+        'new_tag' => 'Create New Tag', 
+        'settings' => 'General Settings'
+    );
 	public $active_page = 'manage_tags';
 
     function inactive_options() {	
@@ -152,9 +156,24 @@ class Triplelift_np_admin_router {
 					$page_include = 'html/new_tag.php';
 					break;
 
-               case 'manage_tags':
+               	case 'manage_tags':
 					$page_action = 'include';
 					$page_include = 'html/manage_tags.php';
+					break;
+
+				case 'settings':
+					$this->active_page = 'settings';
+					$page_action = 'include';
+					$page_include = 'html/general_settings.php';
+					break;
+
+				case 'modify_general_settings':
+					$this->options_object['debug_mode'] = isset($_POST['triplelift_np_admin_global_debug']) ? $_POST['triplelift_np_admin_global_debug'] : false;
+            		update_option( $this->options_field, $this->options_object );
+					$this->debug_mode = $this->options_object['debug_mode'];
+					$this->active_page = 'settings';
+					$page_action = 'include';
+					$page_include = 'html/general_settings.php';
 					break;
 
                 default:

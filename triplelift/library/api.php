@@ -36,7 +36,9 @@ class Triplelift_np_admin_api {
     function do_get($path, $result_to_assoc = false) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, TRIPLELIFT_NP_API_URL.$path);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Auth-token: '.$this->_token));
+		if (isset($this->_token)) {
+	        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Auth-token: '.$this->_token));
+		}
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
         $result = curl_exec($ch);
@@ -46,7 +48,9 @@ class Triplelift_np_admin_api {
     function do_post($path, $data_as_array, $result_to_assoc = false) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, TRIPLELIFT_NP_API_URL.$path);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Auth-token: '.$this->_token));
+		if (isset($this->_token)) {
+        	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Auth-token: '.$this->_token));
+		}
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
         curl_setopt($ch, CURLOPT_POST, TRUE);
