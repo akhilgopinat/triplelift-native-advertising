@@ -2,12 +2,14 @@
 /* 
 Plugin Name: TripleLift Native Advertising 
 Plugin URI: http://www.triplelift.com/ 
-Version: 1.4.1
+Version: 1.4.2
 Author: Triple Lift, Inc. 
 Description: TripleLift enables integrated native advertising that fits beautifully without the layout of your site
 */  
 
 define('PRODUCTION_DISTRIBUTION', true);
+
+include (dirname(__FILE__).'/library/admin_register.php');
 
 if(version_compare(PHP_VERSION, '5.3') >= 0) {
 
@@ -27,7 +29,6 @@ if(version_compare(PHP_VERSION, '5.3') >= 0) {
 
     $libraries = array(
         'api', 
-        'admin_register', 
         'injection', 
         'auth',
         'router',
