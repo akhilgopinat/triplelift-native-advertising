@@ -2,14 +2,12 @@
 /* 
 Plugin Name: TripleLift Native Advertising 
 Plugin URI: http://www.triplelift.com/ 
-Version: 1.4.2
+Version: 1.4.3
 Author: Triple Lift, Inc. 
 Description: TripleLift enables integrated native advertising that fits beautifully without the layout of your site
 */  
 
 define('PRODUCTION_DISTRIBUTION', true);
-
-include (dirname(__FILE__).'/library/admin_register.php');
 
 if(version_compare(PHP_VERSION, '5.3') >= 0) {
 
@@ -32,12 +30,9 @@ if(version_compare(PHP_VERSION, '5.3') >= 0) {
         'injection', 
         'auth',
         'router',
-        'tag_manager'
+        'tag_manager',
+        'admin_register'
     );
-
-    foreach ($libraries as $curr_library) {
-        include (dirname(__FILE__).'/library/'.$curr_library.'.php');
-    }
 
 
     $triplelift_np_admin_register = new Triplelift_np_admin_register();
@@ -46,7 +41,14 @@ if(version_compare(PHP_VERSION, '5.3') >= 0) {
 
 } else {
 
+	$libraries = array(
+		'admin_register'
+	);
+
+	foreach ($libraries as $curr_library) {
+        include (dirname(__FILE__).'/library/'.$curr_library.'.php');
+    }
+
+
     $triplelift_np_admin_register = new Triplelift_np_admin_register(true);
 }
-
-register_activation_hook( __FILE__, array( 'Triplelift_np_admin_register', 'install_plugin' ) );
