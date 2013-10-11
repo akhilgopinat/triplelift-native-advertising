@@ -75,3 +75,5 @@ class Triplelift_np_admin_register {
 			
 	}	
 }
+
+register_activation_hook( __FILE__, array( 'Triplelift_np_admin_register', 'install_plugin' ) );
