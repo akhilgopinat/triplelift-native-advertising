@@ -13,11 +13,13 @@ class Triplelift_np_admin_tag_manager {
 
 	public function get_tag_settings_by_script($script) {
 		$script = stripslashes($script);
-		foreach ($this->options_object['tags'] as $curr_tag) {
-			if ($curr_tag['script'] == $script) {
-				return $curr_tag;
-			}
-		}
+        if (is_array($this->options_object['tags'])) {
+            foreach ($this->options_object['tags'] as $curr_tag) {
+                if ($curr_tag['script'] == $script) {
+                    return $curr_tag;
+                }
+            }
+        }
 		return false;
 	}
 
@@ -67,14 +69,14 @@ class Triplelift_np_admin_tag_manager {
 			$this->wp_include = $fields;
 			$this->wp_exclude = $fields;
 
-			if (isset($_POST['triplelift_np_admin_wp_include_settings'])) {
+			if (isset($_POST['triplelift_np_admin_wp_include_settings']) && is_array($_POST['triplelift_np_admin_wp_include_settings']) ) {
 				foreach ($_POST['triplelift_np_admin_wp_include_settings'] as $curr_field) {
 					if (isset($this->wp_include[$curr_field])) {
 						$this->wp_include[$curr_field] = 1;
 					}
 				}
 			}
-			if (isset($_POST['triplelift_np_admin_wp_exclude_settings'])) {
+			if (isset($_POST['triplelift_np_admin_wp_exclude_settings']) && is_array($_POST['triplelift_np_admin_wp_exclude_settings']) ) {
 				foreach ($_POST['triplelift_np_admin_wp_exclude_settings'] as $curr_field) {
 					if (isset($this->wp_exclude[$curr_field])) {
 						$this->wp_exclude[$curr_field] = 1;
@@ -127,6 +129,9 @@ class Triplelift_np_admin_tag_manager {
 
 	public function update_tag() {
 		if (!$this->error) {
+            if (!isset($this->options_object['tags']) || !is_array($this->options_object['tags'])) {
+                $this->options_object['tags'] = array();
+            }
 			foreach ($this->options_object['tags'] as &$curr_tag) {
 				if ($curr_tag['script'] == $_POST['triplelift_np_admin_original_script'] && !$curr_tag['deleted']) {
 					$modified_tag = array(
@@ -150,6 +155,10 @@ class Triplelift_np_admin_tag_manager {
 	}
 
 	public function tag_exists($script) {
+        if (!isset($this->options_object['tags']) || !is_array($this->options_object['tags'])) {
+            $this->options_object['tags'] = array();
+        }
+
 		foreach ($this->options_object['tags'] as $curr_tag_exists) {  
 			if ($curr_tag_exists['script'] == $script && !$curr_tag_exists['deleted']) return true;
 		}
@@ -319,12 +328,14 @@ class Triplelift_np_admin_tag_manager {
 			$data = $script_data['wp_page_type_exclude'];
 		}
 		$count = 1;
-		foreach ($data as $field => $val) {
-			if ($val) $checked = ' checked '; else $checked = ' ';
-			$return_str .= '<input class="tl_np_checkbox" name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.' value="'.$field.'" data-label="'.$this->field_name_map($field).'"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			if ($count % 4 == 0) $return_str .= '<br>';
-			$count++;
-		}
+        if (is_array($data)) {
+            foreach ($data as $field => $val) {
+                if ($val) $checked = ' checked '; else $checked = ' ';
+                $return_str .= '<input class="tl_np_checkbox" name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.' value="'.$field.'" data-label="'.$this->field_name_map($field).'"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                if ($count % 4 == 0) $return_str .= '<br>';
+                $count++;
+            }
+        }
 		return $return_str;
 	}
 
@@ -354,10 +365,12 @@ class Triplelift_np_admin_tag_manager {
 
 	public function render_interval($script_data, $input_name) {
         $return_str = '<b>Interval</b> between posts (ignored on single pages): <select id="'.$input_name.'" name="'.$input_name.'">';
-        foreach ($this->eligible_intervals as $curr_interval) {
-            if ($script_data['interval'] == $curr_interval) $selected = ' selected ';
-            else $selected = ' ';
-            $return_str .= '<option value="'.$curr_interval.'" '.$selected.'>'.$curr_interval.'</option>';
+        if (is_array($this->eligible_intervals)) {
+            foreach ($this->eligible_intervals as $curr_interval) {
+                if ($script_data['interval'] == $curr_interval) $selected = ' selected ';
+                else $selected = ' ';
+                $return_str .= '<option value="'.$curr_interval.'" '.$selected.'>'.$curr_interval.'</option>';
+            }
         }
         return $return_str .= '</select>';
 	}
@@ -365,10 +378,12 @@ class Triplelift_np_admin_tag_manager {
 	public function render_offset($script_data, $input_name) {
         $return_str = '<b>Offset</b> for first post: <select id="'.$input_name.'" name="'.$input_name.'">';
         if (!isset($script_data['offset'])) {$script_data['offset'] = 'n/a';}
-        foreach ($this->eligible_offsets as $curr_offset) {
-            if ($script_data['offset'] == $curr_offset) $selected = ' selected ';
-            else $selected = ' ';
-            $return_str .= '<option value="'.$curr_offset.'" '.$selected.'>'.$curr_offset.'</option>';
+        if (is_array($this->eligible_offsets)) {
+            foreach ($this->eligible_offsets as $curr_offset) {
+                if ($script_data['offset'] == $curr_offset) $selected = ' selected ';
+                else $selected = ' ';
+                $return_str .= '<option value="'.$curr_offset.'" '.$selected.'>'.$curr_offset.'</option>';
+            }
         }
         return $return_str .= '</select>';
 	}
@@ -376,16 +391,22 @@ class Triplelift_np_admin_tag_manager {
 
     public function render_tag_hooks($script_data, $input_name) {
         $return_str = 'Hook for tag: <select id="'.$input_name.'" name="'.$input_name.'">';
-        foreach ($this->eligible_hooks as $curr_hook) {
-            if ($script_data['hook'] == $curr_hook) $selected = ' selected ';
-            else $selected = ' ';
-            $return_str .= '<option value="'.$curr_hook.'" '.$selected.'>'.$curr_hook.'</option>';
+        if (is_array($this->eligible_hooks)) {
+            foreach ($this->eligible_hooks as $curr_hook) {
+                if ($script_data['hook'] == $curr_hook) $selected = ' selected ';
+                else $selected = ' ';
+                $return_str .= '<option value="'.$curr_hook.'" '.$selected.'>'.$curr_hook.'</option>';
+            }
         }
         return $return_str .= '</select>';
     }
 
 	public function get_tags() {
 		$tags = array();
+        if (!isset($this->options_object['tags']) || !is_array($this->options_object['tags'])) {
+            $this->options_object['tags'] = array();
+        }
+
 		foreach ($this->options_object['tags'] as $curr_elt) {
 			if (!isset($curr_elt['deleted']) || !$curr_elt['deleted']) {
 				$tags[] = $curr_elt;
