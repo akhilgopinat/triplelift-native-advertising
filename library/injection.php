@@ -29,11 +29,13 @@ class Triplelift_np_injection {
     function __construct() {
         $this->options_object = get_option($this->options_field);
 		$this->tags = array();
-		foreach ($this->options_object['tags'] as $curr_elt) {
-			if (!isset($curr_elt['deleted']) || !$curr_elt['deleted']) {
-				$this->tags[] = $curr_elt;
-			}
-		}
+        if (is_array($this->options_object['tags'])) {
+    		foreach ($this->options_object['tags'] as $curr_elt) {
+	    		if (!isset($curr_elt['deleted']) || !$curr_elt['deleted']) {
+		    		$this->tags[] = $curr_elt;
+			    }
+    		}
+        }
 		if (isset($this->options_object['debug_mode']) && $this->options_object['debug_mode'] && isset($_GET['tripleliftDebug']) && $_GET['tripleliftDebug'] ) {
 			$this->debug = true;
 			$this->debug_output['options_object'] = $this->options_object;
@@ -57,35 +59,37 @@ class Triplelift_np_injection {
     function find_eligible_tags() {
         $this->eligible_tags = array();
         $path = parse_url(get_bloginfo( 'url' ), PHP_URL_PATH);
-		
-        foreach ($this->tags as $curr_tag) {
-            $ineligible = false;
-            $path_match = false;
-			if ($this->debug) {
-				$curr_tag_debug = array();
-				$curr_tag_debug['admin_preview'] = $curr_tag['admin_preview'];
-				$curr_tag_debug['is_admin'] = is_admin();
-				$curr_tag_debug['active'] = $curr_tag['active'];
-				$curr_tag_debug['tag'] = $curr_tag;
+	    if (is_array($this->tags)) {	
+            foreach ($this->tags as $curr_tag) {
+                $ineligible = false;
+                $path_match = false;
+	    		if ($this->debug) {
+		    		$curr_tag_debug = array();
+			    	$curr_tag_debug['admin_preview'] = $curr_tag['admin_preview'];
+				    $curr_tag_debug['is_admin'] = is_admin();
+    				$curr_tag_debug['active'] = $curr_tag['active'];
+	    			$curr_tag_debug['tag'] = $curr_tag;
 				
-			}
+		    	}
 		
-            if ((($curr_tag['admin_preview'] && is_admin()) || !$curr_tag['admin_preview']) && $curr_tag['active'])  {
-            	if ($this->debug) {$curr_tag_debug['branch_1'] = true;}
-                if (!$ineligible && !$to_add) {
-                	
-                	if ($this->debug) {$curr_tag_debug['branch_2'] = true;}
-                    if (is_array($curr_tag['exclude_path']) && count($curr_tag['exclude_path'])) {
+                if ((($curr_tag['admin_preview'] && is_admin()) || !$curr_tag['admin_preview']) && $curr_tag['active'])  {
+                	if ($this->debug) {$curr_tag_debug['branch_1'] = true;}
+                    if (!$ineligible && !$to_add) {
                     	
-                    	if ($this->debug) {$curr_tag_debug['branch_3'] = true;}
-                        foreach ($curr_tag['exclude_path'] as $curr_path) {
-                            if (strlen($curr_path) && strpos($path,$curr_path) !== false) {
-                            		
-                            	if ($this->debug) {$curr_tag_debug['branch_4'] = true;}
-                                $ineligible = true;
-                                break;
+                    	if ($this->debug) {$curr_tag_debug['branch_2'] = true;}
+                        if (is_array($curr_tag['exclude_path']) && count($curr_tag['exclude_path'])) {
+                    	
+                        	if ($this->debug) {$curr_tag_debug['branch_3'] = true;}
+                            if (is_array($curr_tag['exclude_path'])) {
+                                foreach ($curr_tag['exclude_path'] as $curr_path) {
+                                    if (strlen($curr_path) && strpos($path,$curr_path) !== false) {
+                                            
+                                        if ($this->debug) {$curr_tag_debug['branch_4'] = true;}
+                                        $ineligible = true;
+                                        break;
+                                    }
+                                }
                             }
-                        }
                     }
                     if (is_array($curr_tag['include_path']) && count($curr_tag['include_path'])) {
                     		
@@ -116,6 +120,7 @@ class Triplelift_np_injection {
            		array_push($this->debug_output['tag_debug_log'], $curr_tag_debug);
        			$this->debug_output['eligible_tags'] = $this->eligible_tags;
 			}
+        }
         }
     }
 
@@ -149,6 +154,9 @@ class Triplelift_np_injection {
 			$curr_post_debug['eligible_tag_debug_log'] = array();
 			$curr_eligible_tag = array();
 		}
+        if (!is_array($injection->eligible_tags)) {
+            $injection->eligible_tags = array();
+        }
         foreach ($injection->eligible_tags as $curr_tag) {
             $include_match = false;
             $ineligible = false;
@@ -159,6 +167,9 @@ class Triplelift_np_injection {
             if ($curr_tag['hook'] == $hook_type) {
             	
             	if ($injection->debug) {$curr_eligible_tag['branch_1'] = true;}
+                if (!is_array($injection->wp_fields)) {
+                    $injection->wp_fields = array();
+                }
                 foreach ($injection->wp_fields as $curr_field) {
                 	if ($injection->debug) {$curr_eligible_tag[$curr_field] = $curr_field();}
                     if ($curr_tag['wp_page_type_exclude'][$curr_field] && $curr_field()) {
