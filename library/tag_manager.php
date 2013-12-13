@@ -7,7 +7,7 @@ class Triplelift_np_admin_tag_manager {
 	private $original_script, $modified_script, $wp_include, $wp_exclude, $include_paths, $exclude_paths, $active;
 	public $error = false; 
 	public $error_message = '', $updated_tag_settings;
-    public $eligible_hooks = array('content', 'excerpt');
+    public $eligible_hooks = array('content', 'excerpt', 'title');
     public $eligible_intervals = array(1,2,3,4,5,6,7,8,9,10,11,12);
     public $eligible_offsets = array("n/a",1,2,3,4,5);
 
