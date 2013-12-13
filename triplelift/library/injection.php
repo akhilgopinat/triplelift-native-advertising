@@ -120,7 +120,7 @@ class Triplelift_np_injection {
            		array_push($this->debug_output['tag_debug_log'], $curr_tag_debug);
        			$this->debug_output['eligible_tags'] = $this->eligible_tags;
 			}
-        }
+			}
         }
     }
 
@@ -234,7 +234,9 @@ class Triplelift_np_injection {
 				array_push($curr_post_debug['eligible_tag_debug_log'], $curr_eligible_tag);
 			}
         }
-		array_push($injection->debug_output['post_debug_log'], $curr_post_debug);
+        if ($injection->debug) {
+    		array_push($injection->debug_output['post_debug_log'], $curr_post_debug);
+        }
         return $content;
     }
 
@@ -248,9 +250,16 @@ class Triplelift_np_injection {
         return Triplelift_np_injection::inject_native_ad($content, $hook_type); 
     }
 
+	function inject_native_ad_title($content) {
+        $hook_type = 'title';
+        return Triplelift_np_injection::inject_native_ad($content, $hook_type); 
+    }
+
+
     function inject_init() {
         add_action("the_content" , array('triplelift_np_injection', 'inject_native_ad_content' ));
         add_action("the_excerpt" , array('triplelift_np_injection', 'inject_native_ad_excerpt' ));
+        add_action("the_title"   , array('triplelift_np_injection', 'inject_native_ad_title' ));
     }
 
 }
