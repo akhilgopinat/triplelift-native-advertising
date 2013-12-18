@@ -7,9 +7,9 @@ class Triplelift_np_admin_router {
     public $options_object, $active, $initialized, $tags, $theme, $blog_host;
 
 	public $tabs = array( 
-        'manage_tags' => 'Manage Tags', 
-        'new_tag' => 'Create New Tag', 
-        'settings' => 'General Settings'
+        'manage_tags' => 'Manage Placements', 
+        'new_tag' => 'Create New Placement', 
+        'settings' => 'Plugin Info'
     );
 	public $active_page = 'manage_tags';
 
@@ -52,6 +52,7 @@ class Triplelift_np_admin_router {
 				}
 			}
             switch ($_POST[$this->action_field]) {
+
 				// new html placement
 				case 'new_html_placement':
 
@@ -73,10 +74,33 @@ class Triplelift_np_admin_router {
 
 						} else {
 							$this->tag_settings = $this->tag_manager->add_tag($script);	
+
+                            $inv_code_start = strpos($script, 'inv_code')+9;
+                            $inv_code_end_amp = strpos($script, '&', $inv_code_start);
+                            $inv_code_end_slash = strpos($script, '\\', $inv_code_start);
+                        
+                            if ($inv_code_end_slash && $inv_code_end_slash < $inv_code_end_amp) {
+                                $inv_code_end = $inv_code_end_slash;
+                            } else {
+                                $inv_code_end = $inv_code_end_amp;
+                            }
+                    
+                            $inv_code = substr($script, $inv_code_start, $inv_code_end - $inv_code_start);	
+                          
+                            $tl_contents = false; 
+                            $tl_contents = @file_get_contents(TRIPLELIFT_NP_WP_SETTINGS_URL.$inv_code); 
+
+                            if ($tl_contents) {
+                                $this->tag_settings = $this->tag_manager->import_tl_settings($tl_contents, array('script' => $script));
+                            }
 							$this->active_page = 'manage_tags';
 							$page_action = 'include';
 							$page_include = 'html/manage_single_tag.php';
-							$this->heading_message = 'Success! Your tag has been added';
+                            if ($tl_contents) {
+    							$this->heading_message = 'Success! Your tag has been added';
+                            } else {
+    							$this->heading_message = 'Success! Your tag has been added. Settings from TripleLift were imported.';
+                            }
 						}
 					}	
 
@@ -91,6 +115,7 @@ class Triplelift_np_admin_router {
 					$interval = isset($_GET['triplelift_np_admin_interval']) ? $_GET['triplelift_np_admin_interval' ] : '';
 					$offset = isset($_GET['triplelift_np_admin_offset']) ? $_GET['triplelift_np_admin_offset' ] : '';
 					$hook = isset($_GET['triplelift_np_admin_hook']) ? $_GET['triplelift_np_admin_hook' ] : '';
+					$append_prepend = isset($_GET['triplelift_np_admin_append_prepend']) ? $_GET['triplelift_np_admin_append_prepend' ] : true;
 
 					if ($this->tag_manager->tag_exists($script)) {
 						$page_action = 'include';
@@ -99,7 +124,7 @@ class Triplelift_np_admin_router {
 						$this->function_call =  ' triplelift_np_admin_html_placement_add("triplelift_np_admin_canvas", "You have already added this placement. You can manage its settings under Manage Tags above."); ';	
 						$this->includes = array('js/add_tag.php');
 					} else {
-						$this->tag_manager->add_tag_from_theme($script, $wp_page_type_include, $wp_page_type_exclude, $include_path, $exclude_path, $interval, $offset, $hook);
+						$this->tag_manager->add_tag_from_theme($script, $wp_page_type_include, $wp_page_type_exclude, $include_path, $exclude_path, $interval, $offset, $hook, $append_prepend);
 						$this->active_page = 'manage_tags';
 						$page_action = 'include';
 						$page_include = 'html/manage_single_tag.php';
@@ -155,6 +180,30 @@ class Triplelift_np_admin_router {
 					$page_action = 'include';
 					$page_include = 'html/new_tag.php';
 					break;
+
+                case 'tl_update_tag':
+					$this->active_page = 'manage_tags';
+					$this->error = true;	
+					$page_action = 'include';
+                    
+                    $this->tag_tl_update = true;
+
+                    $inv_code_start = strpos($_GET['tag'], 'inv_code')+9;
+                    $inv_code_end_amp = strpos($_GET['tag'], '&', $inv_code_start);
+                    $inv_code_end_slash = strpos($_GET['tag'], '\\', $inv_code_start);
+                
+                    if ($inv_code_end_slash && $inv_code_end_slash < $inv_code_end_amp) {
+                        $inv_code_end = $inv_code_end_slash;
+                    } else {
+                        $inv_code_end = $inv_code_end_amp;
+                    }
+                    $inv_code = substr($_GET['tag'], $inv_code_start, $inv_code_end - $inv_code_start);
+                    $curr_tag = $this->tag_manager->get_curr_tag_from_inv_code($inv_code);
+
+                    $tl_contents = @file_get_contents(TRIPLELIFT_NP_WP_SETTINGS_URL.$inv_code); 
+
+                    $this->tag_settings = $this->tag_manager->import_tl_settings($tl_contents, $curr_tag);
+                // intentionally don't put a break here so it goes to manage tags
 
                	case 'manage_tags':
 					$page_action = 'include';

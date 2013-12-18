@@ -15,8 +15,10 @@ class Triplelift_np_admin_tag_manager {
 		$script = stripslashes($script);
         if (is_array($this->options_object['tags'])) {
             foreach ($this->options_object['tags'] as $curr_tag) {
-                if ($curr_tag['script'] == $script) {
-                    return $curr_tag;
+                if (isset($curr_tag['script'])) {
+                    if ($curr_tag['script'] == $script && (!isset($curr_tag['deleted']) || $curr_tag['deleted'] == 0)) {
+                        return $curr_tag;
+                    }
                 }
             }
         }
@@ -94,6 +96,9 @@ class Triplelift_np_admin_tag_manager {
             $this->hook = $_POST['triplelift_np_admin_hook'];
             $this->interval = $_POST['triplelift_np_admin_interval'];
             $this->offset = $_POST['triplelift_np_admin_offset'];
+            $this->append_prepend = isset($_POST['triplelift_np_admin_append_prepend']) ? $_POST['triplelift_np_admin_append_prepend'] : false;
+            $this->tl_last_update = isset($_POST['triplelift_np_admin_tl_last_update']) ? $_POST['triplelift_np_admin_tl_last_update'] : 0;
+
 
 			if (!strpos($this->modified_script, 'script')) {
 				$this->error = true;
@@ -111,7 +116,6 @@ class Triplelift_np_admin_tag_manager {
                 $this->error = true;
                 $this->erorr_message = 'Invalid offset'; 
             }
-
 		}
 	}
 
@@ -126,6 +130,61 @@ class Triplelift_np_admin_tag_manager {
 		}
 		update_option($this->options_field, $this->options_object);
 	}
+
+    public function import_tl_settings($payload, $change_tag) {
+        $settings = json_decode($payload, true);
+        $modified_tag = false;
+        if (isset($settings['timestamp'])) {
+            if (!isset($this->options_object['tags']) || !is_array($this->options_object['tags'])) {
+                $this->options_object['tags'] = array();
+            }
+			foreach ($this->options_object['tags'] as &$curr_tag) {
+				if ($curr_tag['script'] == $change_tag['script'] && !$curr_tag['deleted']) {
+                    $modified_tag = $curr_tag;
+                    $modified_keys = array(
+                        'wp_page_type_include', 'wp_page_type_exclude', 'include_path', 'exclude_path',
+                        'active', 'interval', 'offset','append_prepend', 
+                    );
+                    $modified_diff_keys = array(
+                        'hook_type' => 'hook', 
+                        'timestamp' => 'tl_update_timestamp'
+                    );
+                    foreach ($modified_keys as $key) {
+                        $modified_tag[$key] = $settings[$key];
+                    }
+                    foreach ($modified_diff_keys as $key => $key2) {
+                        $modified_tag[$key2] = $settings[$key];
+                    }
+                    $curr_tag = $modified_tag;
+                }
+            }
+			update_option($this->options_field, $this->options_object);
+        }
+        return $modified_tag;
+    }
+
+    public function get_curr_tag_from_inv_code($inv_code) {
+        if (!isset($this->options_object['tags']) || !is_array($this->options_object['tags'])) {
+           $this->options_object['tags'] = array();
+        }
+        foreach ($this->options_object['tags'] as $curr_tag) {
+    		$inv_code_start = strpos($curr_tag['script'], 'inv_code')+9;
+    		$inv_code_end_amp = strpos($curr_tag['script'], '&', $inv_code_start);
+    		$inv_code_end_slash = strpos($curr_tag['script'], '\\', $inv_code_start);
+		
+    		if ($inv_code_end_slash && $inv_code_end_slash < $inv_code_end_amp) {
+    			$inv_code_end = $inv_code_end_slash;
+    		} else {
+    			$inv_code_end = $inv_code_end_amp;
+    		}
+	
+            $tag_inv_code = substr($curr_tag['script'], $inv_code_start, $inv_code_end - $inv_code_start);
+            if ($tag_inv_code == $inv_code) {
+                return $curr_tag;
+            }
+        }
+        return false;
+    }
 
 	public function update_tag() {
 		if (!$this->error) {
@@ -144,7 +203,9 @@ class Triplelift_np_admin_tag_manager {
 						'interval' => $this->interval,
 						'offset' => $this->offset,
                         'admin_preview' => $this->admin_preview,
-                        'hook' => $this->hook
+                        'hook' => $this->hook,
+                        'append_prepend' => $this->append_prepend,
+                        'tl_last_update' => (isset($this->tl_last_update) ? $this->tl_last_update : 0),
 					);
 					$this->updated_tag_settings = $modified_tag;
 					$curr_tag = $modified_tag;
@@ -165,7 +226,7 @@ class Triplelift_np_admin_tag_manager {
 		return false;
 	}
 
-	public function add_tag_from_theme($script, $wp_page_type_include, $wp_page_type_exclude, $include_path, $exclude_path, $interval, $offset, $hook) {
+	public function add_tag_from_theme($script, $wp_page_type_include, $wp_page_type_exclude, $include_path, $exclude_path, $interval, $offset, $hook, $append_prepend = true, $tl_last_update = 0) {
 		$wp_page_type_include_processed = array(
 			'is_home' => 0,
 			'is_front_page' => 0,
@@ -212,7 +273,9 @@ class Triplelift_np_admin_tag_manager {
 			'offset' => $offset,
 			'active' => true,
 	        'admin_preview' => false,
-	        'hook' => $hook
+	        'hook' => $hook,
+	        'append_prepend' => $append_prepend,
+	        'tl_last_update' => $tl_last_update,
         );	
 		$this->options_object['tags'][] = $script_data;
   		update_option($this->options_field, $this->options_object);
@@ -292,7 +355,9 @@ class Triplelift_np_admin_tag_manager {
 			'offset' => 4,
 			'active' => true,
             'admin_preview' => false,
-            'hook' => 'excerpt'
+            'hook' => 'excerpt',
+            'append_prepend' => true,
+            'tl_last_update' => 0,
 		);
 
 		$this->options_object['tags'][] = $script_data;
@@ -357,10 +422,19 @@ class Triplelift_np_admin_tag_manager {
 		return '<input class="tl_np_checkbox" name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.' data-label="Tag currently active">';
 	}
 
+	public function render_append_prepend_settings($script_data, $input_name) {
+        if (!isset($script_data['append_prepend'])) {
+            $script_data['append_prepend'] = true;
+        }
+		$checked = $script_data['append_prepend'] ? ' checked ' : ' ';
+		return '<input class="tl_np_checkbox" name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.' data-label="Append tag (uncheck to prepend)">';
+	}
+
+
 
 	public function render_admin_only_preview($script_data, $input_name) {
 		$checked = $script_data['admin_preview'] ? ' checked ' : ' ';
-		return 'Test mode - only show to admin users (uncheck to show to all): <br><input name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.'> Enabled';
+		return 'Test mode - only show to admin users (uncheck to show to all): <br><input name="'.$input_name.'" id="'.$input_name.'" type="checkbox" '.$checked.' style="width:4px;"> Enabled';
 	}
 
 	public function render_interval($script_data, $input_name) {

@@ -72,8 +72,5 @@ class Triplelift_np_admin_register {
 			'wp_version' 	=> get_bloginfo('version'),
 			'plugin_version' => $plugin_data['Version'],  	
 		));
-			
 	}	
 }
-
-register_activation_hook( __FILE__, array( 'Triplelift_np_admin_register', 'install_plugin' ) );

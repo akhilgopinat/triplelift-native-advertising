@@ -36,7 +36,7 @@ class Triplelift_np_injection {
 			    }
     		}
         }
-		if (isset($this->options_object['debug_mode']) && $this->options_object['debug_mode'] && isset($_GET['tripleliftDebug']) && $_GET['tripleliftDebug'] ) {
+		if (isset($_GET['tripleliftDebug']) && $_GET['tripleliftDebug'] ) {
 			$this->debug = true;
 			$this->debug_output['options_object'] = $this->options_object;
 			$this->debug_output['time_started'] = date("Y-m-d H:i:s");
@@ -201,7 +201,18 @@ class Triplelift_np_injection {
 								
 								if ($injection->debug) {$curr_eligible_tag['branch_7'] = true;} 
 		                        $injection->post_count++;
-		                        return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                                  
+                                if (isset($curr_tag['append_prepend'])) {
+                                    return (
+                                        $curr_tag['append_prepend'] ?
+	                                        $content.html_entity_decode(stripslashes($curr_tag['script'])) :
+	                                        html_entity_decode(stripslashes($curr_tag['script'])).$content
+                                   );
+                                } else {
+	                                return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                                }
+
+
 		                    }	
 						} else {
 							
@@ -210,7 +221,16 @@ class Triplelift_np_injection {
 		                    	
 								if ($injection->debug) {$curr_eligible_tag['branch_9'] = true;} 
 		                        $injection->post_count++;
-		                        return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                                if (isset($curr_tag['append_prepend'])) {
+                                    return (
+                                        $curr_tag['append_prepend'] ?
+	                                        $content.html_entity_decode(stripslashes($curr_tag['script'])) :
+	                                        html_entity_decode(stripslashes($curr_tag['script'])).$content
+                                   );
+                                } else {
+	                                return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                                }
+
 		                    }
 							
 						}
@@ -221,7 +241,15 @@ class Triplelift_np_injection {
 	                    	
 							if ($injection->debug) {$curr_eligible_tag['branch_11'] = true;} 
 	                        $injection->post_count++;
-	                        return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                            if (isset($curr_tag['append_prepend'])) {
+                                return (
+                                    $curr_tag['append_prepend'] ?
+	                                    $content.html_entity_decode(stripslashes($curr_tag['script'])) :
+	                                    html_entity_decode(stripslashes($curr_tag['script'])).$content
+                               );
+                            } else {
+	                            return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                            }
 	                    }
                     }
                     
