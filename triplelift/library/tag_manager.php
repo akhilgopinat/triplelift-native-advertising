@@ -15,8 +15,8 @@ class Triplelift_np_admin_tag_manager {
 		$script = stripslashes($script);
         if (is_array($this->options_object['tags'])) {
             foreach ($this->options_object['tags'] as $curr_tag) {
-                if (isset($curr_tag['script']) && isset($curr_tag['deleted'])) {
-                    if ($curr_tag['script'] == $script && $curr_tag['deleted'] == 0) {
+                if (isset($curr_tag['script'])) {
+                    if ($curr_tag['script'] == $script && (!isset($curr_tag['deleted']) || $curr_tag['deleted'] == 0)) {
                         return $curr_tag;
                     }
                 }
