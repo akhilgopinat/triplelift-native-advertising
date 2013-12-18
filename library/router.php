@@ -7,8 +7,8 @@ class Triplelift_np_admin_router {
     public $options_object, $active, $initialized, $tags, $theme, $blog_host;
 
 	public $tabs = array( 
-        'manage_tags' => 'Manage Tags', 
-        'new_tag' => 'Create New Tag', 
+        'manage_tags' => 'Manage Placements', 
+        'new_tag' => 'Create New Placement', 
         'settings' => 'Plugin Info'
     );
 	public $active_page = 'manage_tags';
