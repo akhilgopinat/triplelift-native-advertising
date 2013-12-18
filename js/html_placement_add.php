@@ -5,7 +5,7 @@ function triplelift_np_admin_html_placement_add(target_div, error_message) {
 	} else {
 		error_message = '';
 	}
-	var main_text ='<a href="#" onclick="triplelift_np_admin_add_tag(\''+target_div+'\')">Go back</a><br>&nbsp;<br><form name="logout" method="post" action="options-general.php?page=triplelift_np_admin" class="fancy-form">'+
+	var main_text ='<form name="logout" method="post" action="options-general.php?page=triplelift_np_admin" class="fancy-form">'+
     '<p class="name">'+  
         '<label for="name">Please paste the tag here:</label>  '+
         '<input type="text" name="triplelift_np_admin_html_placement_value" id="triplelift_np_admin_html_placement_value" size=75/> '+
