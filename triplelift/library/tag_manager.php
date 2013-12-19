@@ -52,7 +52,7 @@ class Triplelift_np_admin_tag_manager {
 		}
 	}
 
-	public function validate_modified_tag() {
+	public function validate_modified_tag($prev_tag = false) {
 		if (!$this->error) {
 			$fields = array(
 				'is_home' => 0,
@@ -97,7 +97,8 @@ class Triplelift_np_admin_tag_manager {
             $this->interval = $_POST['triplelift_np_admin_interval'];
             $this->offset = $_POST['triplelift_np_admin_offset'];
             $this->append_prepend = isset($_POST['triplelift_np_admin_append_prepend']) ? $_POST['triplelift_np_admin_append_prepend'] : false;
-            $this->tl_last_update = isset($_POST['triplelift_np_admin_tl_last_update']) ? $_POST['triplelift_np_admin_tl_last_update'] : 0;
+            $this->tl_last_update = time();
+            $this->tl_update_timestamp = time();
 
 
 			if (!strpos($this->modified_script, 'script')) {
@@ -206,6 +207,7 @@ class Triplelift_np_admin_tag_manager {
                         'hook' => $this->hook,
                         'append_prepend' => $this->append_prepend,
                         'tl_last_update' => (isset($this->tl_last_update) ? $this->tl_last_update : 0),
+                        'tl_update_timestamp' => (isset($this->tl_last_update) ? $this->tl_last_update : 0),
 					);
 					$this->updated_tag_settings = $modified_tag;
 					$curr_tag = $modified_tag;

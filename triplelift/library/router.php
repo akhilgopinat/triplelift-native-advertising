@@ -151,9 +151,12 @@ class Triplelift_np_admin_router {
 
 				case 'modify_single_tag':
 					$this->active_page = 'manage_tags';
+                    
 					$this->tag_manager->validate_required_fields();
 					$this->tag_manager->validate_post_tag_exists();
-					$this->tag_manager->validate_modified_tag();
+
+					$prev_tag = $this->tag_manager->get_tag_settings_by_script(addslashes($_POST['triplelift_np_admin_original_script']));
+					$this->tag_manager->validate_modified_tag($prev_tag);
 					$this->tag_manager->update_tag();
 
 					if (!$this->tag_manager->error) {

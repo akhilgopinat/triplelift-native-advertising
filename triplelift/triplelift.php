@@ -2,7 +2,7 @@
 /* 
 Plugin Name: TripleLift Native Advertising 
 Plugin URI: http://www.triplelift.com/ 
-Version: 1.5.2
+Version: 1.5.3
 Author: Triple Lift, Inc. 
 Description: TripleLift enables integrated native advertising that fits beautifully without the layout of your site
 */  
