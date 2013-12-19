@@ -2,7 +2,7 @@
 /* 
 Plugin Name: TripleLift Native Advertising 
 Plugin URI: http://www.triplelift.com/ 
-Version: 1.5.1
+Version: 1.5.3
 Author: Triple Lift, Inc. 
 Description: TripleLift enables integrated native advertising that fits beautifully without the layout of your site
 */  
@@ -19,12 +19,12 @@ if(version_compare(PHP_VERSION, '5.3') >= 0) {
         define('TRIPLELIFT_NP_API_URL', 'http://api.triplelift.com/');
 	    define('TRIPLELIFT_NP_CONSOLE_URL', 'http://console.triplelift.com/');
 	    define('TRIPLELIFT_NP_IB', 'http://ib.3lift.com/');
-	    define('TRIPLELIFT_NP_WP_SETTINGS_URL', 'http://dynamic.3lift.com/wp_settings/');
+	    define('TRIPLELIFT_NP_WP_SETTINGS_URL', 'http://mgmt.triplelift.net/wp_settings/');
     } else {
         define('TRIPLELIFT_NP_API_URL', 'http://sand-api.triplelift.net/');
 	    define('TRIPLELIFT_NP_CONSOLE_URL', 'http://sand-console.triplelift.net/');
 	    define('TRIPLELIFT_NP_IB', 'http://sand-ib.3lift.com/');
-	    define('TRIPLELIFT_NP_WP_SETTINGS_URL', 'http://sand-dynamic.3lift.com/wp_settings/');
+	    define('TRIPLELIFT_NP_WP_SETTINGS_URL', 'http://mgmt-sand.triplelift.net/wp_settings/');
     }
 
     $libraries = array(
