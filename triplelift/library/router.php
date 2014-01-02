@@ -88,7 +88,7 @@ class Triplelift_np_admin_router {
                             $inv_code = substr($script, $inv_code_start, $inv_code_end - $inv_code_start);	
                           
                             $tl_contents = false; 
-                            $tl_contents = @file_get_contents(TRIPLELIFT_NP_WP_SETTINGS_URL.$inv_code); 
+                            $tl_contents = @file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/settings?inv_code='.urlencode($inv_code)); 
 
                             if ($tl_contents) {
                                 $this->tag_settings = $this->tag_manager->import_tl_settings($tl_contents, array('script' => $script));
@@ -203,8 +203,8 @@ class Triplelift_np_admin_router {
                     $inv_code = substr($_GET['tag'], $inv_code_start, $inv_code_end - $inv_code_start);
                     $curr_tag = $this->tag_manager->get_curr_tag_from_inv_code($inv_code);
 
-                    $tl_contents = @file_get_contents(TRIPLELIFT_NP_WP_SETTINGS_URL.$inv_code); 
-
+                    $tl_contents = @file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/settings?inv_code='.urlencode($inv_code)); 
+					
                     $this->tag_settings = $this->tag_manager->import_tl_settings($tl_contents, $curr_tag);
                 // intentionally don't put a break here so it goes to manage tags
 

@@ -3,17 +3,15 @@ Contributors: TripleLift
 Tags: Native Advertising, TripleLift, Advertising, Monetization, Ads
 Requires at least: 3.2.
 Tested up to: 3.8.1
-Stable tag: 1.5.3
+Stable tag: 1.6.0
 License: MIT
 
-Implement native advertising with the click of a few buttons. Increase revenue and improve user experience with beautiful, unobtrusive, image-driven advertising
+Increase revenue and improve user experience with beautiful, unobtrusive, image-driven native advertising
 
 == Description ==
 
-Implement TripleLift's native advertising with various wordpress
-themes. Simply install the plugin, follew the directions, and then you're
-ready to go. Increase revenue and improve user experience with beautiful,
-unobtrusive, image-driven advertising.
+Easily get started with TripleLift's native advertising. Simply install the plugin, follow the directions, and then you're
+ready to go. Increase revenue and improve user experience with beautiful, unobtrusive, image-driven advertising.
 
 
 == Installation ==

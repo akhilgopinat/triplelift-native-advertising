@@ -1,5 +1,10 @@
 <?php
 
+/**
+	Triplelift_np_admin_tag_manager is the class that provides the admin functionality related to 
+		to the creation and maintenance of tags and settings 
+*/
+
 class Triplelift_np_admin_tag_manager {
 
 	public $options_object, $options_field;
@@ -133,7 +138,12 @@ class Triplelift_np_admin_tag_manager {
 	}
 
     public function import_tl_settings($payload, $change_tag) {
-        $settings = json_decode($payload, true);
+        $settings_original = json_decode($payload, true);
+        if (isset($settings_original['settings'])) {
+	        $settings = $settings_original['settings'];
+        } else {
+	        $settings = array();
+        }
         $modified_tag = false;
         if (isset($settings['timestamp'])) {
             if (!isset($this->options_object['tags']) || !is_array($this->options_object['tags'])) {
@@ -148,7 +158,8 @@ class Triplelift_np_admin_tag_manager {
                     );
                     $modified_diff_keys = array(
                         'hook_type' => 'hook', 
-                        'timestamp' => 'tl_update_timestamp'
+                        'timestamp' => 'tl_update_timestamp',
+                        'timestamp' => 'tl_last_update'
                     );
                     foreach ($modified_keys as $key) {
                         $modified_tag[$key] = $settings[$key];
