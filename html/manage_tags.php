@@ -47,15 +47,16 @@ if (count($this->tags) ==  0) {
     		}
     
             $inv_code = substr($curr_tag['script'], $inv_code_start, $inv_code_end - $inv_code_start);	
-            $tl_contents = @file_get_contents(TRIPLELIFT_NP_WP_SETTINGS_URL.$inv_code); 
+            $tl_contents = @file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/settings?inv_code='.urlencode($inv_code)); 
 
             $tl_updated = false;
             $tl_just_updated = false;
             if ($tl_contents) {
-                $payload = json_decode($tl_contents, true);
-                if (!isset($curr_tag['tl_update_timestamp'])) {
+                $payload_original = json_decode($tl_contents, true);
+                $payload = $payload_original['settings'];
+                if (!isset($curr_tag['tl_last_update'])) {
                     $tl_updated = true;
-                } elseif ($curr_tag['tl_update_timestamp'] < $payload['timestamp']) {
+                } elseif ($curr_tag['tl_last_update'] < $payload['timestamp']) {
                     $tl_updated = true;
                 }
             }

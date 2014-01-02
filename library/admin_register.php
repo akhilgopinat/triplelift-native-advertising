@@ -1,5 +1,8 @@
 <?php
 
+/**
+	Triplelift_np_admin_register is the class that provides the base hooks for the admin functionality
+*/
 class Triplelift_np_admin_register {
 
     function __construct($invalid_version = false) {

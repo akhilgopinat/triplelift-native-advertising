@@ -42,7 +42,6 @@ if (isset($this->error_message) && $this->error_message) {
                     <p><?php print $this->tag_manager->render_append_prepend_settings($this->tag_settings, 'triplelift_np_admin_append_prepend', 'include');?></p>
                     <p><?php print $this->tag_manager->render_wp_settings($this->tag_settings, 'triplelift_np_admin_wp_include_settings[]', 'include');?></p>
                     <p><?php print $this->tag_manager->render_wp_settings($this->tag_settings, 'triplelift_np_admin_wp_exclude_settings[]', 'exclude');?></p>
-                    <p class="width:4px"><?php print $this->tag_manager->render_admin_only_preview($this->tag_settings, 'triplelift_np_admin_admin_preview');?></p>
                     <p><?php print $this->tag_manager->render_path_settings($this->tag_settings, 'triplelift_np_admin_include_paths', 'include');?></p>
                     <p><?php print $this->tag_manager->render_path_settings($this->tag_settings, 'triplelift_np_admin_exclude_paths', 'exclude');?></p>
                     <p><?php print $this->tag_manager->render_tag_hooks($this->tag_settings, 'triplelift_np_admin_hook');?></p>

@@ -1,5 +1,10 @@
 <?php
 
+/**
+	Triplelift_np_admin_tag_manager is the class that provides the admin functionality related to 
+		to the creation and maintenance of tags and settings 
+*/
+
 class Triplelift_np_admin_tag_manager {
 
 	public $options_object, $options_field;
@@ -52,7 +57,7 @@ class Triplelift_np_admin_tag_manager {
 		}
 	}
 
-	public function validate_modified_tag() {
+	public function validate_modified_tag($prev_tag = false) {
 		if (!$this->error) {
 			$fields = array(
 				'is_home' => 0,
@@ -97,12 +102,13 @@ class Triplelift_np_admin_tag_manager {
             $this->interval = $_POST['triplelift_np_admin_interval'];
             $this->offset = $_POST['triplelift_np_admin_offset'];
             $this->append_prepend = isset($_POST['triplelift_np_admin_append_prepend']) ? $_POST['triplelift_np_admin_append_prepend'] : false;
-            $this->tl_last_update = isset($_POST['triplelift_np_admin_tl_last_update']) ? $_POST['triplelift_np_admin_tl_last_update'] : 0;
+            $this->tl_last_update = time();
+            $this->tl_update_timestamp = time();
 
 
 			if (!strpos($this->modified_script, 'script')) {
 				$this->error = true;
-				$this->error_message = 'Invalid script tag';
+				$this->error_message = 'The script you entered was not in a valid format. Please try again.';
 			}
             if (!in_array($_POST['triplelift_np_admin_hook'], $this->eligible_hooks)) {
                 $this->error = true;
@@ -132,7 +138,12 @@ class Triplelift_np_admin_tag_manager {
 	}
 
     public function import_tl_settings($payload, $change_tag) {
-        $settings = json_decode($payload, true);
+        $settings_original = json_decode($payload, true);
+        if (isset($settings_original['settings'])) {
+	        $settings = $settings_original['settings'];
+        } else {
+	        $settings = array();
+        }
         $modified_tag = false;
         if (isset($settings['timestamp'])) {
             if (!isset($this->options_object['tags']) || !is_array($this->options_object['tags'])) {
@@ -147,7 +158,8 @@ class Triplelift_np_admin_tag_manager {
                     );
                     $modified_diff_keys = array(
                         'hook_type' => 'hook', 
-                        'timestamp' => 'tl_update_timestamp'
+                        'timestamp' => 'tl_update_timestamp',
+                        'timestamp' => 'tl_last_update'
                     );
                     foreach ($modified_keys as $key) {
                         $modified_tag[$key] = $settings[$key];
@@ -206,6 +218,7 @@ class Triplelift_np_admin_tag_manager {
                         'hook' => $this->hook,
                         'append_prepend' => $this->append_prepend,
                         'tl_last_update' => (isset($this->tl_last_update) ? $this->tl_last_update : 0),
+                        'tl_update_timestamp' => (isset($this->tl_last_update) ? $this->tl_last_update : 0),
 					);
 					$this->updated_tag_settings = $modified_tag;
 					$curr_tag = $modified_tag;
@@ -456,7 +469,7 @@ class Triplelift_np_admin_tag_manager {
             foreach ($this->eligible_offsets as $curr_offset) {
                 if ($script_data['offset'] == $curr_offset) $selected = ' selected ';
                 else $selected = ' ';
-                $return_str .= '<option value="'.$curr_offset.'" '.$selected.'>'.$curr_offset.'</option>';
+                $return_str .= '<option value="'.$curr_offset.'" '.$selected.'>'.($curr_offset == "n/a" ? "No offset" : $curr_offset).'</option>';
             }
         }
         return $return_str .= '</select>';
