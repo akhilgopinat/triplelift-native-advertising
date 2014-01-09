@@ -88,14 +88,16 @@ class Triplelift_np_admin_router {
                             $inv_code = substr($script, $inv_code_start, $inv_code_end - $inv_code_start);	
                           
                             $tl_contents = false; 
-                            $tl_contents = @file_get_contents(TRIPLELIFT_NP_WP_SETTINGS_URL.$inv_code); 
+                            $tl_contents = @file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/settings?inv_code='.urlencode($inv_code)); 
 
+							@file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/action?url='.get_bloginfo('url').'&action=new_script_tag&value='.urlencode(json_encode($this->tag_settings))); 
+							
                             if ($tl_contents) {
                                 $this->tag_settings = $this->tag_manager->import_tl_settings($tl_contents, array('script' => $script));
                             }
 							$this->active_page = 'manage_tags';
 							$page_action = 'include';
-							$page_include = 'html/manage_single_tag.php';
+							$page_include = 'html/manage_tags.php';
                             if ($tl_contents) {
     							$this->heading_message = 'Success! Your tag has been added';
                             } else {
@@ -130,6 +132,7 @@ class Triplelift_np_admin_router {
 						$page_include = 'html/manage_single_tag.php';
 						$this->tag_settings = $this->tag_manager->get_tag_settings_by_script($script);
                         $this->heading_message = 'Tag added from theme';
+                        @file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/action?url='.get_bloginfo('url').'&action=new_tag_from_theme&value='.urlencode(json_encode($this->tag_settings))); 
 					}
 					break;
 
@@ -140,6 +143,7 @@ class Triplelift_np_admin_router {
 					$page_action = 'include';
 					$page_include = 'html/manage_tags.php';
 					$this->tag_manager->delete_tag($_GET['tag']);
+					@file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/action?url='.get_bloginfo('url').'&action=delete&value='.urlencode($_GET['tag'])); 
 					break;
 
 				case 'modify_single_tag_start':
@@ -147,13 +151,17 @@ class Triplelift_np_admin_router {
 					$page_action = 'include';
 					$page_include = 'html/manage_single_tag.php';
 					$this->tag_settings = $this->tag_manager->get_tag_settings_by_script($_GET['tag']);
+					@file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/action?url='.get_bloginfo('url').'&action=edit&value='.urlencode(json_encode($this->tag_settings))); 
 					break;
 
 				case 'modify_single_tag':
 					$this->active_page = 'manage_tags';
+                    
 					$this->tag_manager->validate_required_fields();
 					$this->tag_manager->validate_post_tag_exists();
-					$this->tag_manager->validate_modified_tag();
+
+					$prev_tag = $this->tag_manager->get_tag_settings_by_script(addslashes($_POST['triplelift_np_admin_original_script']));
+					$this->tag_manager->validate_modified_tag($prev_tag);
 					$this->tag_manager->update_tag();
 
 					if (!$this->tag_manager->error) {
@@ -161,6 +169,7 @@ class Triplelift_np_admin_router {
 						$page_action = 'include';
 						$page_include = 'html/manage_single_tag.php';
 						$this->heading_message = 'Success! Your tag has been modified';
+						@file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/action?url='.get_bloginfo('url').'&action=edit&value='.urlencode(json_encode($this->tag_settings))); 
 					} else {
 						print $this->tag_manager->error_message;die;
 					}
@@ -172,7 +181,7 @@ class Triplelift_np_admin_router {
                     $this->new_install();
                     $this->options_object['active'] = true;
                     update_option( $this->options_field, $this->options_object );
-
+					@file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/action?url='.get_bloginfo('url').'&action=activate&value='); 
                     break;
 
                 case 'new_tag':
@@ -200,8 +209,8 @@ class Triplelift_np_admin_router {
                     $inv_code = substr($_GET['tag'], $inv_code_start, $inv_code_end - $inv_code_start);
                     $curr_tag = $this->tag_manager->get_curr_tag_from_inv_code($inv_code);
 
-                    $tl_contents = @file_get_contents(TRIPLELIFT_NP_WP_SETTINGS_URL.$inv_code); 
-
+                    $tl_contents = @file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/settings?inv_code='.urlencode($inv_code)); 
+					
                     $this->tag_settings = $this->tag_manager->import_tl_settings($tl_contents, $curr_tag);
                 // intentionally don't put a break here so it goes to manage tags
 

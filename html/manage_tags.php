@@ -1,4 +1,14 @@
 <?php
+if (isset($this->heading_message) && $this->heading_message) {
+print '<div class="triplelift_np_admin_display_success" id="triplelift_np_admin_success_message">'.$this->heading_message.'</div>';
+}
+
+if (isset($this->error_message) && $this->error_message) {
+	print '<div class="updated" id="message"><p><strong>Error</strong>: '.$this->error_message.'</p></div>';
+}
+?>
+
+<?php
 if (count($this->tags) ==  0) {
 	print '<br><div class="updated" id="message"><p><strong>Error:</strong> You have no tags associated with your WordPress account. Please click <a href="options-general.php?page=triplelift_np_admin&tab=new_tag">create new tag</a> above to begin.</p></div>';
 } else {
@@ -47,15 +57,16 @@ if (count($this->tags) ==  0) {
     		}
     
             $inv_code = substr($curr_tag['script'], $inv_code_start, $inv_code_end - $inv_code_start);	
-            $tl_contents = @file_get_contents(TRIPLELIFT_NP_WP_SETTINGS_URL.$inv_code); 
+            $tl_contents = @file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/settings?inv_code='.urlencode($inv_code)); 
 
             $tl_updated = false;
             $tl_just_updated = false;
             if ($tl_contents) {
-                $payload = json_decode($tl_contents, true);
-                if (!isset($curr_tag['tl_update_timestamp'])) {
+                $payload_original = json_decode($tl_contents, true);
+                $payload = $payload_original['settings'];
+                if (!isset($curr_tag['tl_last_update'])) {
                     $tl_updated = true;
-                } elseif ($curr_tag['tl_update_timestamp'] < $payload['timestamp']) {
+                } elseif ($curr_tag['tl_last_update'] < $payload['timestamp']) {
                     $tl_updated = true;
                 }
             }
@@ -88,7 +99,9 @@ if (count($this->tags) ==  0) {
 </tbody>
 
 </table>
-
+<script>
+jQuery("#triplelift_np_admin_success_message").fadeOut(4000, function() {});
+</script>
 <?php 
     }
 }

@@ -1,11 +1,15 @@
 <?php
 
+/**
+	Triplelift_np_admin_register is the class that provides the base hooks for the admin functionality
+*/
 class Triplelift_np_admin_register {
 
     function __construct($invalid_version = false) {
         if (!$invalid_version) {
             add_action( 'admin_menu', array('triplelift_np_admin_register', 'register_options_page' ));
             add_filter('plugin_action_links', array('triplelift_np_admin_register', 'link_hook'), 10, 2); // digits = priority, num args
+            
 	 	    wp_register_style( 'triplelift_np_admin_style', plugins_url('stylesheet.css', __FILE__) );
         } else {
             add_action( 'admin_menu', array('triplelift_np_admin_register', 'register_invalid_php_version_page' ));
@@ -13,10 +17,9 @@ class Triplelift_np_admin_register {
     }	
 
     function link_hook($links, $file) {
-        if ($file == TRIPLELIFT_NP_BASE_FILE){
-            $link = "<a href='options-general.php?page=triplelift_np_admin'>" . __("Settings") . "</a>";
-            array_unshift($links, $link);
-        }
+        $link = "<a href='options-general.php?page=triplelift_np_admin'>" . __("Settings") . "</a>";
+        array_unshift($links, $link);
+        
         return $links;
     }
 
@@ -72,5 +75,9 @@ class Triplelift_np_admin_register {
 			'wp_version' 	=> get_bloginfo('version'),
 			'plugin_version' => $plugin_data['Version'],  	
 		));
+	}
+	
+	function uninstall_plugin() {
+		@file_get_contents(TRIPLELIFT_NP_API_URL.'open/wordpress/action?url='.get_bloginfo('url').'&action=uninstall&value='); 
 	}	
 }
