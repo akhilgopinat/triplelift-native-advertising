@@ -7,7 +7,7 @@ class Triplelift_np_injection {
 
 	public $debug = false, $global_debug = false, $settings_debug;
 	public $debug_output = array();
-	private $title_count = 0, $excerpt_count = 0, $content_count = 0;
+	private $title_count = 0, $excerpt_count = 0, $content_count = 0, $the_post_count = 0;
 
 	// array of the wordpress page types
     public $wp_fields =  array(
@@ -252,6 +252,8 @@ class Triplelift_np_injection {
 				$curr_count = $triplelift_np_injection_register->title_count++;
 			} elseif ($val['hook_type'] == 'excerpt') {
 				$curr_count = $triplelift_np_injection_register->excerpt_count++;				
+			} elseif ($val['hook_type'] == 'post') {
+				$curr_count = $triplelift_np_injection_register->the_post_count++;				
 			} else {
 				$curr_count = $triplelift_np_injection_register->content_count++;				
 			}
@@ -351,6 +353,8 @@ class Triplelift_np_injection {
 				$curr_count = $triplelift_np_injection_register->title_count++;
 			} elseif ($hook_type == 'excerpt') {
 				$curr_count = $triplelift_np_injection_register->excerpt_count++;				
+			} elseif ($hook_type == 'post') {
+				$curr_count = $triplelift_np_injection_register->the_post_count++;				
 			} else {
 				$curr_count = $triplelift_np_injection_register->content_count++;				
 			}
@@ -367,8 +371,12 @@ class Triplelift_np_injection {
 				</span>
 		    </a>';
 
-	        
-			return $prepend . $content . $append;
+	        if ($hook_type == 'post') {
+		        print $prepend;
+	        } else {
+				return $prepend . $content . $append;		        
+	        }
+
         }
 		if ($injection->debug) {
 			$curr_post_debug = array();
@@ -446,13 +454,22 @@ class Triplelift_np_injection {
 									array_push($injection->debug_output['post_debug_log'], $curr_post_debug);
 								}
                                 if (isset($curr_tag['append_prepend'])) {
-                                    return (
-                                        $curr_tag['append_prepend'] ?
-	                                        $content.html_entity_decode(stripslashes($curr_tag['script'])) :
-	                                        html_entity_decode(stripslashes($curr_tag['script'])).$content
-                                   );
+                                	if ($hook_type == 'post') {
+										print html_entity_decode(stripslashes($curr_tag['script']));                       	
+                                	} else {
+	                                	return (
+	                                        $curr_tag['append_prepend'] ?
+		                                        $content.html_entity_decode(stripslashes($curr_tag['script'])) :
+		                                        html_entity_decode(stripslashes($curr_tag['script'])).$content
+	                                   );	
+                                	}
+                                    
                                 } else {
-	                                return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                                	if ($hook_type == 'post') {
+										print html_entity_decode(stripslashes($curr_tag['script']));                       	
+                                	} else {
+		                                return $content.html_entity_decode(stripslashes($curr_tag['script']));	                                	
+                                	} 
                                 }
 
 
@@ -471,13 +488,23 @@ class Triplelift_np_injection {
 									array_push($injection->debug_output['post_debug_log'], $curr_post_debug);
 								}
                                 if (isset($curr_tag['append_prepend'])) {
-                                    return (
-                                        $curr_tag['append_prepend'] ?
-	                                        $content.html_entity_decode(stripslashes($curr_tag['script'])) :
-	                                        html_entity_decode(stripslashes($curr_tag['script'])).$content
-                                   );
+                                	if ($hook_type == 'post') {
+	                                	print html_entity_decode(stripslashes($curr_tag['script']));                       	
+                                	} else {
+	                                    return (
+	                                        $curr_tag['append_prepend'] ?
+		                                        $content.html_entity_decode(stripslashes($curr_tag['script'])) :
+		                                        html_entity_decode(stripslashes($curr_tag['script'])).$content
+	                                   );
+	                                	
+                                	}
                                 } else {
-	                                return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                                	if ($hook_type == 'post') {
+	                                	print html_entity_decode(stripslashes($curr_tag['script']));                       	
+                                	} else {
+		                                return $content.html_entity_decode(stripslashes($curr_tag['script']));	
+                                	}
+                                
                                 }
 
 		                    }
@@ -497,13 +524,22 @@ class Triplelift_np_injection {
 								array_push($injection->debug_output['post_debug_log'], $curr_post_debug);
 							}
                             if (isset($curr_tag['append_prepend'])) {
-                                return (
-                                    $curr_tag['append_prepend'] ?
-	                                    $content.html_entity_decode(stripslashes($curr_tag['script'])) :
-	                                    html_entity_decode(stripslashes($curr_tag['script'])).$content
-                               );
+                            	if ($hook_type == 'post') {
+                                	print html_entity_decode(stripslashes($curr_tag['script']));                       	
+                            	} else {
+	                            	return (
+		                                $curr_tag['append_prepend'] ?
+		                                    $content.html_entity_decode(stripslashes($curr_tag['script'])) :
+		                                    html_entity_decode(stripslashes($curr_tag['script'])).$content
+		                           );	
+                            	}
+                                
                             } else {
-	                            return $content.html_entity_decode(stripslashes($curr_tag['script']));
+                            	if ($hook_type == 'post') {
+                                	print html_entity_decode(stripslashes($curr_tag['script']));                       	
+                            	} else {
+		                            return $content.html_entity_decode(stripslashes($curr_tag['script']));
+		                        }
                             }
 	                    }
                     }
@@ -547,11 +583,16 @@ class Triplelift_np_injection {
         return Triplelift_np_injection::inject_native_ad($content, $hook_type); 
     }
 
+	function inject_native_ad_post($content) {
+        $hook_type = 'post';
+        return Triplelift_np_injection::inject_native_ad($content, $hook_type); 
+    }
 
     function inject_init() {
         add_action("the_content" , array('triplelift_np_injection', 'inject_native_ad_content' ));
         add_action("the_excerpt" , array('triplelift_np_injection', 'inject_native_ad_excerpt' ));
         add_action("the_title"   , array('triplelift_np_injection', 'inject_native_ad_title' ));
+        add_action("the_post"    , array('triplelift_np_injection', 'inject_native_ad_post' ));
     }
 
 }

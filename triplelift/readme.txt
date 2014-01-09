@@ -3,7 +3,7 @@ Contributors: TripleLift
 Tags: Native Advertising, TripleLift, Advertising, Monetization, Ads
 Requires at least: 3.2.
 Tested up to: 3.8.1
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 License: MIT
 
 Increase revenue and improve user experience with beautiful, unobtrusive, image-driven native advertising
@@ -29,7 +29,7 @@ Native advertising is a form of advertising that is more tightly integrated
 into a publisher's website. TripleLift uses ads that are clearly marked as
 sponsored, but otherwise fit the look and feel of a publisher's site, to
 deliver highly relevant, beautiful ads (that don't flash and blink). You can
-learn more here: http://triplelift.com/pub-inf
+learn more here: http://triplelift.com/pub-info?r=wp
 
 = Do I need to be a customer of TripleLift to use this plugin =
 
@@ -72,6 +72,12 @@ Yes. Many publishers who manage their own sales choose to license our native ad 
 Absolutely not. Our tags fetch content asynchronously from blazing fast CDNs located in 30 data centers around the world.
 
 == Changelog ==
+
+= 1.6 =
+* Remote updates
+
+= 1.5 =
+* Overhauled interface
 
 = 1.4 =
 * Debug Mode
