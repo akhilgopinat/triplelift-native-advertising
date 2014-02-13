@@ -449,7 +449,13 @@ class Triplelift_np_injection {
                 }
 
                 if (!$ineligible && ($include_match || $curr_tag['path_match'])) {
-                	
+             	    if ($curr_tag['interval'] == 'once' && isset($curr_tag_elt['injected']) && $curr_tag_elt['injected']) {
+                		$curr_eligible_tag['previously-injected-interval-once'] = true;
+                		array_push($curr_post_debug['eligible_tag_debug_log'], $curr_eligible_tag);
+                		array_push($injection->debug_output['post_debug_log'], $curr_post_debug);
+	                	return $content;	
+            	    }
+               	
 					if ($injection->debug) {$curr_eligible_tag['branch_4'] = true;}
                     // we got a match
                     // are we doing offset stuff
@@ -469,6 +475,8 @@ class Triplelift_np_injection {
 									array_push($curr_post_debug['eligible_tag_debug_log'], $curr_eligible_tag);
 									array_push($injection->debug_output['post_debug_log'], $curr_post_debug);
 								}
+
+
                                 if (isset($curr_tag['append_prepend'])) {
                                 	if ($hook_type == 'post') {
 										print html_entity_decode(stripslashes($curr_tag['script']));                       	
