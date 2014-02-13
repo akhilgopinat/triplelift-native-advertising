@@ -8,6 +8,7 @@ class Triplelift_np_injection {
 	public $debug = false, $global_debug = false, $settings_debug;
 	public $debug_output = array();
 	private $title_count = 0, $excerpt_count = 0, $content_count = 0, $the_post_count = 0;
+	private $debug_title_count = 0, $debug_excerpt_count = 0, $debug_content_count = 0, $debug_the_post_count = 0;
 
 	// array of the wordpress page types
     public $wp_fields =  array(
@@ -73,7 +74,6 @@ class Triplelift_np_injection {
 	        $curr_tag['hook'] = $this->get_querystring_or_default('hook_type', 'excerpt');
 	        $curr_tag['include_path'] = $this->get_querystring_or_default('include_path', false) ? explode(',',$this->get_querystring_or_default('include_path', array())) : array();
 	        $curr_tag['exclude_path'] = $this->get_querystring_or_default('exclude_path', false) ? explode(',',$this->get_querystring_or_default('exclude_path', array())) : array();
-
 	        $curr_tag['script'] = addslashes(htmlentities('<script src="http://ib.3lift.com/ttj?inv_code='.$this->get_querystring_or_default('script', '').'"></script>' ));
 	        $this->tags[] = $curr_tag;
 	        
@@ -187,7 +187,7 @@ class Triplelift_np_injection {
                         }
                     }
                 }
-	
+
 				if ($this->debug) {$curr_tag_debug['post_ineligible'] = $ineligible;}	
                 if (!$ineligible) {
                 	$curr_tag_debug['eligible_tag'] = true;
@@ -198,7 +198,7 @@ class Triplelift_np_injection {
 	                	'interval' => $curr_tag['interval'], 
 	                	'offset' => (isset($curr_tag['offset']) ? $curr_tag['offset'] : 'n/a'), 
 	                	'wp_page_type_exclude' => $curr_tag['wp_page_type_exclude'], 
-	                	'wp_page_type_include' => $curr_tag['wp_page_type_include']
+	                	'wp_page_type_include' => $curr_tag['wp_page_type_include'],
 	                );
 				}
             }
@@ -248,21 +248,28 @@ class Triplelift_np_injection {
 		
 		if (isset($val['hook_type'])) {
 			$curr_count = 0;
-			if ($val['hook_type'] == 'title') {				
-				$curr_count = $triplelift_np_injection_register->title_count++;
-			} elseif ($val['hook_type'] == 'excerpt') {
-				$curr_count = $triplelift_np_injection_register->excerpt_count++;				
-			} elseif ($val['hook_type'] == 'post') {
-				$curr_count = $triplelift_np_injection_register->the_post_count++;				
+			if ($hook_type == 'title') {				
+				$curr_count = $triplelift_np_injection_register->debug_title_count++;
+			} elseif ($hook_type == 'excerpt') {
+				$curr_count = $triplelift_np_injection_register->debug_excerpt_count++;				
+			} elseif ($hook_type == 'post') {
+				$curr_count = $triplelift_np_injection_register->debug_the_post_count++;				
 			} else {
-				$curr_count = $triplelift_np_injection_register->content_count++;				
+				$curr_count = $triplelift_np_injection_register->debug_content_count++;				
 			}
 			
 			$curr_content = '';
 			if (isset($val['content'])) {
-				$curr_content = str_replace(array("\r", "\n"), '', addslashes(substr($val['content'], 0, 50)));
-				if (strlen($val['content']) > 50) {
-					$curr_content .= ' ...';
+				if (is_array($val['content'])) {
+					$triplelift_np_injection_register->debug_tag_output_array('Content', $val['content']);	
+				} elseif (is_object($val['content'])) {
+					$triplelift_np_injection_register->debug_tag_output_array('Content', (array) $val['content']);	
+				} else {
+					$curr_content = str_replace(array("\r", "\n"), '', addslashes(substr($val['content'], 0, 50)));
+					if (strlen($val['content']) > 50) {
+						$curr_content .= ' ...';
+					}
+					
 				}
 			}
 			$injected = '';
@@ -281,6 +288,8 @@ class Triplelift_np_injection {
 		foreach ($val as $sub_key => $sub_val) {
 			if (is_array($sub_val)) 
 				$triplelift_np_injection_register->debug_post_output_array($sub_key, $sub_val);
+			elseif (is_object($sub_val))
+				$triplelift_np_injection_register->debug_post_output_array($sub_key, (array) $sub_val);
 			else 
 				print 'console.log("'.$sub_key.': '.str_replace(array("\r", "\n"), '', addslashes(htmlspecialchars($sub_val))).'");
 				';	
@@ -346,18 +355,20 @@ class Triplelift_np_injection {
         // assumes php 5.3+        
         global $triplelift_np_injection_register;
         $injection =& $triplelift_np_injection_register;
+    	$curr_count = 0;
+    	
+		if ($hook_type == 'title') {				
+			$curr_count = $triplelift_np_injection_register->title_count++;
+		} elseif ($hook_type == 'excerpt') {
+			$curr_count = $triplelift_np_injection_register->excerpt_count++;				
+		} elseif ($hook_type == 'post') {
+			$curr_count = $triplelift_np_injection_register->the_post_count++;				
+		} else {
+			$curr_count = $triplelift_np_injection_register->content_count++;				
+		}
+
         if ($injection->global_debug) {
 	        $img = '<img src="http://img-4.3lift.com/?url=http%3A%2F%2Fimages.adpinr.com%2F2947107.png" width=20 height=20 style="width:20px;height:20px">';
-	        $curr_count = 0;
-			if ($hook_type == 'title') {				
-				$curr_count = $triplelift_np_injection_register->title_count++;
-			} elseif ($hook_type == 'excerpt') {
-				$curr_count = $triplelift_np_injection_register->excerpt_count++;				
-			} elseif ($hook_type == 'post') {
-				$curr_count = $triplelift_np_injection_register->the_post_count++;				
-			} else {
-				$curr_count = $triplelift_np_injection_register->content_count++;				
-			}
 			
 	        $prepend = '<a href="#" class="tl-global-debug-tooltip">'.$img.'
 	        	<span>
@@ -411,7 +422,12 @@ class Triplelift_np_injection {
 				$curr_eligible_tag['tag'] = $curr_tag;	
 			}
             if ($curr_tag['hook'] == $hook_type) {
-            	
+            	if ($curr_tag['interval'] == 'once' && isset($curr_tag_elt['injected']) && $curr_tag_elt['injected']) {
+            		$curr_eligible_tag['previously-injected-interval-once'] = true;
+            		array_push($curr_post_debug['eligible_tag_debug_log'], $curr_eligible_tag);
+            		array_push($injection->debug_output['post_debug_log'], $curr_post_debug);
+	            	return $content;	
+            	}
             	if ($injection->debug) {$curr_eligible_tag['branch_1'] = true;}
                 if (!is_array($injection->wp_fields)) {
                     $injection->wp_fields = array();
@@ -440,13 +456,13 @@ class Triplelift_np_injection {
                     if (isset($curr_tag['offset']) && $curr_tag['offset'] != 'n/a') {
                     	
 						if ($injection->debug) {$curr_eligible_tag['branch_5'] = true;}
-						if ($injection->post_count <= $curr_tag['offset']) {
+						if ($curr_count <= $curr_tag['offset']) {
 							
 							if ($injection->debug) {$curr_eligible_tag['branch_6'] = true;}
-							if ($injection->post_count == $curr_tag['offset']) {
+							if ($curr_count == $curr_tag['offset']) {
 								
 								if ($injection->debug) {$curr_eligible_tag['branch_7'] = true;} 
-		                        $injection->post_count++;
+
 								if ($injection->debug) {
 		                        	$curr_tag_elt['injected'] = true;
 		                        	$curr_eligible_tag['injected'] = true;
@@ -477,10 +493,14 @@ class Triplelift_np_injection {
 						} else {
 							
 							if ($injection->debug) {$curr_eligible_tag['branch_8'] = true;}
-		                    if ( ($injection->post_count - $curr_tag['offset']) % $curr_tag['interval'] == 0 && $injection->post_count > 0) {
+		                    if (
+		                    	($curr_tag['interval'] != 'once' && ($curr_count - $curr_tag['offset']) % $curr_tag['interval'] == 0 && $curr_count > 0) ||
+								($curr_tag['interval'] == 'once' &&  ($curr_count - $curr_tag['offset']) == 0 && $curr_count > 0)
+							)
+		                      {
 		                    	
 								if ($injection->debug) {$curr_eligible_tag['branch_9'] = true;} 
-		                        $injection->post_count++;
+		                        $curr_count++;
 		                        if ($injection->debug) {
 		                        	$curr_tag_elt['injected'] = true;
 		                        	$curr_eligible_tag['injected'] = true;
@@ -513,10 +533,13 @@ class Triplelift_np_injection {
                     } else {
                     	
 						if ($injection->debug) {$curr_eligible_tag['branch_10'] = true;}
-	                    if ($injection->post_count % $curr_tag['interval'] == 0 && $injection->post_count > 0) {
+	                    if (
+	                    	($curr_tag['interval'] != 'once' && $curr_count % $curr_tag['interval'] == 0 && $curr_count > 0) || 
+	                    	($curr_tag['interval'] == 'once' && ($curr_count - $curr_tag['offset']) == 0 && $curr_count > 0)	
+							) {
 	                    	
 							if ($injection->debug) {$curr_eligible_tag['branch_11'] = true;} 
-	                        $injection->post_count++;
+
 	                        if ($injection->debug) {
 	                        	$curr_tag_elt['injected'] = true;
 	                        	$curr_eligible_tag['injected'] = true;
@@ -544,7 +567,6 @@ class Triplelift_np_injection {
 	                    }
                     }
                     
-                    $injection->post_count++;
                     break;
                 }
 

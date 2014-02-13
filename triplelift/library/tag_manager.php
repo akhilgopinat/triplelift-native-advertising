@@ -13,7 +13,7 @@ class Triplelift_np_admin_tag_manager {
 	public $error = false; 
 	public $error_message = '', $updated_tag_settings;
     public $eligible_hooks = array('post', 'content', 'excerpt', 'title');
-    public $eligible_intervals = array(1,2,3,4,5,6,7,8,9,10,11,12);
+    public $eligible_intervals = array(1,2,3,4,5,6,7,8,9,10,11,12,'once');
     public $eligible_offsets = array("n/a",1,2,3,4,5);
 
 	public function get_tag_settings_by_script($script) {
@@ -180,20 +180,24 @@ class Triplelift_np_admin_tag_manager {
            $this->options_object['tags'] = array();
         }
         foreach ($this->options_object['tags'] as $curr_tag) {
-    		$inv_code_start = strpos($curr_tag['script'], 'inv_code')+9;
-    		$inv_code_end_amp = strpos($curr_tag['script'], '&', $inv_code_start);
-    		$inv_code_end_slash = strpos($curr_tag['script'], '\\', $inv_code_start);
+			if (	isset($curr_tag['active']) &&   
+					( (!isset($curr_tag['deleted']) && $curr_tag['deleted'] == 0 ) || !isset($curr_tag['deleted']) ) 
+				) {
+	    		$inv_code_start = strpos($curr_tag['script'], 'inv_code')+9;
+	    		$inv_code_end_amp = strpos($curr_tag['script'], '&', $inv_code_start);
+	    		$inv_code_end_slash = strpos($curr_tag['script'], '\\', $inv_code_start);
+			
+	    		if ($inv_code_end_slash && $inv_code_end_slash < $inv_code_end_amp) {
+	    			$inv_code_end = $inv_code_end_slash;
+	    		} else {
+	    			$inv_code_end = $inv_code_end_amp;
+	    		}
 		
-    		if ($inv_code_end_slash && $inv_code_end_slash < $inv_code_end_amp) {
-    			$inv_code_end = $inv_code_end_slash;
-    		} else {
-    			$inv_code_end = $inv_code_end_amp;
-    		}
-	
-            $tag_inv_code = substr($curr_tag['script'], $inv_code_start, $inv_code_end - $inv_code_start);
-            if ($tag_inv_code == $inv_code) {
-                return $curr_tag;
-            }
+	            $tag_inv_code = substr($curr_tag['script'], $inv_code_start, $inv_code_end - $inv_code_start);
+	            if ($tag_inv_code == $inv_code) {
+	                return $curr_tag;
+	            }
+	        }
         }
         return false;
     }
